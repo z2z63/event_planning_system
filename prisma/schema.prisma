@@ -1,0 +1,127 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int    @id @default(autoincrement())
+  username String @unique @db.VarChar(20)
+  salt     String @db.Char(64)
+  hash     String @db.Char(32)
+
+  reimbursementsRequested Reimbursement[]       @relation("reimbursement applicant")
+  reimbursementsApproved  Reimbursement[]       @relation("reimbursement approver")
+  ParticipantGroup        UserGroup[]
+  NotificationComfirm     NotificationComfirm[]
+}
+
+model Activity {
+  id                  Int                   @id @default(autoincrement())
+  name                String                @db.VarChar(128)
+  startTime           DateTime
+  endTime             DateTime
+  budget              Decimal               @db.Money
+  expenditure         Decimal               @default(0) @db.Money
+  resources           Resource[]
+  Reimbursement       Reimbursement[]
+  ParticipantGroup    UserGroup[]
+  Notification        Notification[]
+  NotificationComfirm NotificationComfirm[]
+  Agenda              Agenda[]
+}
+
+model Resource {
+  id        Int        @id @default(autoincrement())
+  name      String     @db.VarChar(128)
+  activitys Activity[]
+}
+
+model Permission {
+  name         String  @id @db.VarChar(128)
+  organizer    Boolean
+  participants Boolean
+  admin        Boolean
+}
+
+model Attachment {
+  id              Int            @id @default(autoincrement())
+  filename        String         @db.VarChar(128)
+  visibility      BigInt
+  size            Int
+  blobId          Int
+  Reimbursement   Reimbursement? @relation(fields: [reimbursementId], references: [id])
+  reimbursementId Int?
+}
+
+model ResourceGroup {
+  id   Int    @id @default(autoincrement())
+  name String @db.VarChar(128)
+  info String @db.Text
+}
+
+model Reimbursement {
+  id          Int                 @id @default(autoincrement())
+  user        User                @relation("reimbursement applicant", fields: [userId], references: [id])
+  activity    Activity            @relation(fields: [activityId], references: [id])
+  amount      Decimal             @db.Money
+  info        String              @db.Text
+  status      ReimbursementStatus
+  approver    User                @relation("reimbursement approver", fields: [approverId], references: [id])
+  approveTime DateTime
+  attachments Attachment[]
+  approverId  Int
+  userId      Int
+  activityId  Int
+}
+
+model UserGroup {
+  id           Int      @id @default(autoincrement())
+  name         String   @db.Text
+  info         String   @db.Text
+  activity     Activity @relation(fields: [activityId], references: [id])
+  activityId   Int
+  seq          Int
+  participants User[]
+}
+
+model Notification {
+  id         Int      @id @default(autoincrement())
+  activity   Activity @relation(fields: [activityId], references: [id])
+  content    String   @db.Text
+  visibility BigInt
+  activityId Int
+}
+
+model NotificationComfirm {
+  id         Int      @id @default(autoincrement())
+  activity   Activity @relation(fields: [activityId], references: [id])
+  user       User     @relation(fields: [userId], references: [id])
+  activityId Int
+  userId     Int
+}
+
+model Agenda {
+  id         Int      @id @default(autoincrement())
+  name       String   @db.VarChar(128)
+  startTime  DateTime
+  endTime    DateTime
+  info       String   @db.Text
+  activity   Activity @relation(fields: [activityId], references: [id])
+  activityId Int
+}
+
+enum ReimbursementStatus {
+  PENDDING
+  REJECTED
+  APPROVED
+}
