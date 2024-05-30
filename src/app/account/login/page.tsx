@@ -4,17 +4,25 @@ import FormItem from "antd/es/form/FormItem";
 import Link from "next/link";
 import { server_login } from "@/app/account/action";
 import { usePathname } from "next/navigation";
+import React, { useState } from "react";
+import { GoogleReCaptcha } from "react-google-recaptcha-v3";
 
 export type FieldType = {
   username: string;
   password: string;
-  verifyCode: string;
 };
 
 export default function Page() {
   const path = usePathname();
   const redirect = new URLSearchParams(path).get("redirect");
   const [messageApi, contextHolder] = message.useMessage();
+  const [token, setToken] = useState("");
+  const onVerify = React.useCallback(
+    (t: string) => {
+      setToken(t);
+    },
+    [setToken],
+  );
   let url: string;
   if (redirect === null) {
     url = "/";
@@ -23,7 +31,11 @@ export default function Page() {
   }
 
   async function client_login(data: FieldType) {
-    if (await server_login(data)) {
+    if (token === "") {
+      messageApi.warning("未完成RECAPTCHA，请重试");
+      return;
+    }
+    if (await server_login(data, token)) {
       window.location.href = url;
     } else {
       messageApi.error("帐号或密码错误");
@@ -39,20 +51,33 @@ export default function Page() {
           onFinish={client_login}
           labelCol={{ span: 4 }}
           wrapperCol={{ span: 8 }}
+          size="large"
         >
           <FormItem<FieldType>
             name="username"
             label="用户名"
             labelAlign="right"
           >
-            <Input style={{ width: 280 }} placeholder="请输入用户名" />
+            <Input
+              name="username"
+              style={{ width: 280 }}
+              placeholder="请输入用户名"
+            />
           </FormItem>
           <FormItem<FieldType> name="password" label="密码">
-            <Input style={{ width: 280 }} placeholder="请输入密码" />
+            <Input.Password
+              name="password"
+              style={{ width: 280 }}
+              placeholder="请输入密码"
+            />
           </FormItem>
-          <FormItem<FieldType> name="verifyCode" label="验证码">
-            <Input style={{ width: 280 }} placeholder="请输入验证码" />
-          </FormItem>
+          <span className="text-gray-500 w-[300px] block text-sm mx-auto mb-[20px]">
+            This site is protected by reCAPTCHA and the Google
+            <a href="https://policies.google.com/privacy">Privacy Policy</a>
+            and
+            <a href="https://policies.google.com/terms">Terms of Service</a>
+            apply.
+          </span>
           <FormItem<FieldType> wrapperCol={{ offset: 8 }}>
             <Button
               htmlType="submit"
@@ -70,6 +95,7 @@ export default function Page() {
             点击注册
           </Link>
         </div>
+        <GoogleReCaptcha onVerify={onVerify} />
       </div>
     </>
   );

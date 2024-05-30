@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import React from "react";
+import { GoogleReCaptchaProvider } from "react-google-recaptcha-v3";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const path = usePathname();
@@ -31,9 +32,21 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <div className="bg-[#E1DBEC] w-full h-[60px] flex justify-center items-center rounded-t-[10px] text-[30px]">
             {card_title}
           </div>
-          {children}
+          <RECAPTCHA>{children}</RECAPTCHA>
         </div>
       </div>
     </div>
+  );
+}
+
+export function RECAPTCHA({ children }: { children: React.ReactNode }) {
+  const key = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
+  if (key === undefined) {
+    throw Error("NEXT_PUBLIC_RECAPTCHA_SITE_KEY");
+  }
+  return (
+    <GoogleReCaptchaProvider reCaptchaKey={key} useRecaptchaNet>
+      {children}
+    </GoogleReCaptchaProvider>
   );
 }

@@ -10,7 +10,7 @@ export async function createUser({
   password: string;
 }) {
   const salt = crypto.randomBytes(32).toString("hex");
-  const hash = passwordHash(password , salt);
+  const hash = passwordHash(password, salt);
   await prisma.user.create({
     data: { username, salt, hash },
   });
@@ -27,9 +27,8 @@ export async function verifyCredentials({
   if (user === null) {
     return false;
   }
-  return passwordHash(password , user.salt) === user.hash;
+  return passwordHash(password, user.salt) === user.hash;
 }
-
 
 export async function getUserByUsername(username: string) {
   return prisma.user.findUnique({
@@ -37,6 +36,6 @@ export async function getUserByUsername(username: string) {
   });
 }
 
-function passwordHash(password:string, salt:string){
+function passwordHash(password: string, salt: string) {
   return md5(password + salt);
 }

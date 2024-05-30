@@ -13,7 +13,7 @@ export async function middleware(request: NextRequest) {
     );
   }
   const jwt = request.cookies.get("jwt")!.value;
-  const secret = new TextEncoder().encode(process.env["SECRET"]);
+  const secret = new TextEncoder().encode(process.env.SECRET);
   try {
     await jose.jwtVerify(jwt, secret, {
       issuer: "urn:example:issuer",

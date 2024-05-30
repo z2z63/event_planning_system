@@ -68,7 +68,8 @@ function Card(data: CardData) {
   return (
     <div
       className="bg-white w-[300px] h-[300px] rounded-[5px] m-[20px] flex flex-col hover:relative hover:bottom-[5px]"
-      style={{ boxShadow: "0px 4px 10px 0px rgba(0, 0, 0, 0.3);" }} key={data.title}
+      style={{ boxShadow: "0px 4px 10px 0px rgba(0, 0, 0, 0.3)" }}
+      key={data.title}
     >
       <Image
         src={data.img}
@@ -81,7 +82,7 @@ function Card(data: CardData) {
         <div className="flex justify-between w-full p-[10px]">
           <span className="text-[#989797]">{organizers}</span>
           <div className="flex justify-between items-center">
-            <div className={`h-[20px] w-[20px] rounded-full bg-[${color}]`}/>
+            <div className={`h-[20px] w-[20px] rounded-full bg-[${color}]`} />
             <span>{status}</span>
           </div>
         </div>

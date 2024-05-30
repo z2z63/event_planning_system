@@ -20,7 +20,7 @@ model User {
   hash     String @db.Char(32)
 
   reimbursementsRequested Reimbursement[]       @relation("reimbursement applicant")
-  reimbursementsApproved  Reimbursement[]       @relation("reimbursement approver")
+  reimbursementsHanlded Reimbursement[] @relation("reimbursement handler")
   ParticipantGroup        UserGroup[]
   NotificationComfirm     NotificationComfirm[]
 }
@@ -76,10 +76,11 @@ model Reimbursement {
   amount      Decimal             @db.Money
   info        String              @db.Text
   status      ReimbursementStatus
-  approver    User                @relation("reimbursement approver", fields: [approverId], references: [id])
-  approveTime DateTime
+  handler    User     @relation("reimbursement handler", fields: [handlerId], references: [id])
+  handleTime DateTime
+  commemt    String   @db.Text
   attachments Attachment[]
-  approverId  Int
+  handlerId  Int
   userId      Int
   activityId  Int
 }
