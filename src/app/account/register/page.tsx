@@ -4,6 +4,7 @@ import { Button, Form, Input, message } from "antd";
 import FormItem from "antd/es/form/FormItem";
 import Link from "next/link";
 import { server_register } from "@/app/account/action";
+import useRecaptcha from "@/app/account/recaptcha";
 
 export type FieldType = {
   username: string;
@@ -14,12 +15,15 @@ export type FieldType = {
 
 export default function Page() {
   const [messageApi, contextHolder] = message.useMessage();
+  const [token, refreshRecaptcha, ReCaptcha] = useRecaptcha();
 
   async function client_register(data: FieldType) {
     if (data.password !== data.confirm_password) {
+      refreshRecaptcha();
       return messageApi.error("两次输入的密码不一致");
     }
-    if (!(await server_register(data))) {
+    if (!(await server_register(data, token))) {
+      refreshRecaptcha();
       return messageApi.error("注册失败");
     }
     window.location.href = "/account/login";
@@ -28,6 +32,7 @@ export default function Page() {
   return (
     <>
       {contextHolder}
+      <ReCaptcha />
       <div className="relative h-full flex flex-col items-center justify-around">
         <Form
           name="login"

@@ -39,3 +39,19 @@ export async function getUserByUsername(username: string) {
 function passwordHash(password: string, salt: string) {
   return md5(password + salt);
 }
+
+export async function getUsersByPrefix(prefix: string) {
+  const data = await prisma.user.findMany({
+    select: {
+      id: true,
+      username: true,
+    },
+    where: {
+      username: {
+        startsWith: prefix,
+      },
+    },
+  });
+  console.log(data);
+  return data;
+}

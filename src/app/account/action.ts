@@ -32,7 +32,10 @@ export async function server_login(data: LoginFieldType, token: string) {
   return true;
 }
 
-export async function server_register(data: RegisterFieldType) {
+export async function server_register(data: RegisterFieldType, token: string) {
+  if (!(await recaptcha_verify(token))) {
+    return false;
+  }
   try {
     await createUser(data);
   } catch (error) {

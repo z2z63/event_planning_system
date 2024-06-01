@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 import React from "react";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
+import StyleDowngrade from "./StyleDowngrade";
+import { StoreProvider } from "@/app/StoreProvider";
 
 export const metadata: Metadata = {
   title: "活动安排规划系统",
@@ -13,11 +15,14 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  console.log("---");
   return (
     <html lang="zh">
       <body>
-        <AntdRegistry>{children}</AntdRegistry>
+        <StyleDowngrade>
+          <AntdRegistry>
+            <StoreProvider>{children}</StoreProvider>
+          </AntdRegistry>
+        </StyleDowngrade>
       </body>
     </html>
   );

@@ -4,8 +4,8 @@ import FormItem from "antd/es/form/FormItem";
 import Link from "next/link";
 import { server_login } from "@/app/account/action";
 import { usePathname } from "next/navigation";
-import React, { useState } from "react";
-import { GoogleReCaptcha } from "react-google-recaptcha-v3";
+import React from "react";
+import useRecaptcha from "@/app/account/recaptcha";
 
 export type FieldType = {
   username: string;
@@ -16,13 +16,7 @@ export default function Page() {
   const path = usePathname();
   const redirect = new URLSearchParams(path).get("redirect");
   const [messageApi, contextHolder] = message.useMessage();
-  const [token, setToken] = useState("");
-  const onVerify = React.useCallback(
-    (t: string) => {
-      setToken(t);
-    },
-    [setToken],
-  );
+  const [token, refreshRecaptcha, ReCaptcha] = useRecaptcha();
   let url: string;
   if (redirect === null) {
     url = "/";
@@ -32,12 +26,14 @@ export default function Page() {
 
   async function client_login(data: FieldType) {
     if (token === "") {
+      refreshRecaptcha();
       messageApi.warning("未完成RECAPTCHA，请重试");
       return;
     }
     if (await server_login(data, token)) {
       window.location.href = url;
     } else {
+      refreshRecaptcha();
       messageApi.error("帐号或密码错误");
     }
   }
@@ -45,6 +41,7 @@ export default function Page() {
   return (
     <>
       {contextHolder}
+      <ReCaptcha />
       <div className="relative h-full flex flex-col items-center justify-around">
         <Form
           name="login"
@@ -95,7 +92,6 @@ export default function Page() {
             点击注册
           </Link>
         </div>
-        <GoogleReCaptcha onVerify={onVerify} />
       </div>
     </>
   );

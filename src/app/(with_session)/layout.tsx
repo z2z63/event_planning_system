@@ -1,10 +1,10 @@
 import React from "react";
 import Image from "next/image";
-import { Avatar, Button, Popover } from "antd";
 import dayjs from "dayjs";
 import * as jose from "jose";
 import { cookies } from "next/headers";
 import { PopUpAvatar } from "@/app/(with_session)/popup_avatar";
+import Link from "next/link";
 
 export default async function HeaderLayout({
   children,
@@ -18,10 +18,12 @@ export default async function HeaderLayout({
   return (
     <div className="flex flex-col">
       <header className="w-full flex justify-between border-b-[1px] border-black">
-        <div className="flex justify-around items-center px-[10px]">
+        <Link href="/" className="flex justify-around items-center px-[10px]">
           <Image src="/logo.svg" width={80} height={80} alt="logo" />
-          <span className="text-[30px] w-[4em]">活动安排规划系统</span>
-        </div>
+          <span className="ml-[10px] text-[24px] w-[4em]">
+            活动安排规划系统
+          </span>
+        </Link>
         <div className="flex justify-around items-center">
           <div className="flex flex-col">
             <span className="text-[18px] mb-[5px]">

@@ -2,9 +2,10 @@
 
 import { Button, Input, Segmented, Select } from "antd";
 import Image from "next/image";
-import assert from "node:assert";
+import Link from "next/link";
 
 type CardData = {
+  id: string;
   title: string;
   organizers: string[];
   status: "planning" | "progressing";
@@ -14,12 +15,14 @@ type CardData = {
 export default function Home() {
   const data: CardData[] = [
     {
+      id: "1",
       title: "奥林匹克森林公园团建",
       organizers: ["李四", "王五"],
       status: "planning",
       img: "/activity1.png",
     },
     {
+      id: "2",
       title: "科技竞赛答辩",
       organizers: ["小明"],
       status: "progressing",
@@ -39,7 +42,7 @@ export default function Home() {
           <Select.Option value="planning">筹划中</Select.Option>
           <Select.Option value="progressing">进行中</Select.Option>
         </Select>
-        <Button size="large" type="primary">
+        <Button size="large" type="primary" href="/activity/create">
           创建活动
         </Button>
       </div>
@@ -66,7 +69,8 @@ function Card(data: CardData) {
     progressing: "#3BA3DB",
   }[data.status];
   return (
-    <div
+    <Link
+      href={`/activity/${data.id}`}
       className="bg-white w-[300px] h-[300px] rounded-[5px] m-[20px] flex flex-col hover:relative hover:bottom-[5px]"
       style={{ boxShadow: "0px 4px 10px 0px rgba(0, 0, 0, 0.3)" }}
       key={data.title}
@@ -87,6 +91,6 @@ function Card(data: CardData) {
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }

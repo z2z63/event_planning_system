@@ -4,13 +4,14 @@ import * as jose from "jose";
 import { JOSEError } from "jose/errors";
 
 export async function middleware(request: NextRequest) {
+  const gotoLogin = NextResponse.redirect(
+    new URL(
+      "/account/login?redirect=" + encodeURIComponent(request.url),
+      request.url,
+    ),
+  );
   if (!request.cookies.has("jwt")) {
-    return NextResponse.redirect(
-      new URL(
-        "/account/login?redirect=" + encodeURIComponent(request.url),
-        request.url,
-      ),
-    );
+    return gotoLogin;
   }
   const jwt = request.cookies.get("jwt")!.value;
   const secret = new TextEncoder().encode(process.env.SECRET);
@@ -21,15 +22,11 @@ export async function middleware(request: NextRequest) {
     });
   } catch (error) {
     if (error instanceof JOSEError) {
-      return NextResponse.redirect(
-        new URL(
-          "/account/login?redirect=" + encodeURIComponent(request.url),
-          request.url,
-        ),
-      );
+      return gotoLogin;
     }
     throw error;
   }
+  console.log("-----");
 }
 
 export const config = {
