@@ -1,0 +1,20 @@
+services:
+  app:
+    image: z2z63/event_planning_system:latest
+    ports:
+      - 127.0.0.1:3000:3000
+    environment:
+      SECRET: ${SECRET}
+      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/event_planning_system?schema=public
+      NEXT_PUBLIC_RECAPTCHA_SITE_KEY: ${NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
+      RECAPTCHA_SECRET_KEY: ${RECAPTCHA_SECRET_KEY}
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: event_planning_system
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./prisma/generated.sql:/docker-entrypoint-initdb.d/init.sql
+volumes:
+  postgres-data:
