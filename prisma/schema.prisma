@@ -38,6 +38,8 @@ model Activity {
   Notification        Notification[]
   NotificationComfirm NotificationComfirm[]
   Agenda              Agenda[]
+  cover  Blob @relation(fields: [blobId], references: [id])
+  blobId Int
 }
 
 model Resource {
@@ -58,9 +60,10 @@ model Attachment {
   filename        String         @db.VarChar(128)
   visibility      BigInt
   size            Int
-  blobId          Int
+  blob   Blob @relation(fields: [blobId], references: [id])
   Reimbursement   Reimbursement? @relation(fields: [reimbursementId], references: [id])
   reimbursementId Int?
+  blobId Int
 }
 
 model ResourceGroup {
@@ -125,4 +128,11 @@ enum ReimbursementStatus {
   PENDDING
   REJECTED
   APPROVED
+}
+
+model Blob {
+  id         Int          @id @default(autoincrement())
+  data       Bytes
+  Attachment Attachment[]
+  Activity   Activity[]
 }

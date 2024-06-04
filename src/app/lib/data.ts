@@ -41,7 +41,7 @@ function passwordHash(password: string, salt: string) {
 }
 
 export async function getUsersByPrefix(prefix: string) {
-  const data = await prisma.user.findMany({
+  return prisma.user.findMany({
     select: {
       id: true,
       username: true,
@@ -52,6 +52,25 @@ export async function getUsersByPrefix(prefix: string) {
       },
     },
   });
-  console.log(data);
-  return data;
+}
+
+export async function getBlobById(id: number) {
+  const buffer = await prisma.blob.findUnique({
+    select: {
+      data: true,
+    },
+    where: {
+      id,
+    },
+  });
+  return buffer?.data;
+}
+
+export async function createBlob(data: Buffer) {
+  const { id } = await prisma.blob.create({
+    data: {
+      data,
+    },
+  });
+  return id;
 }

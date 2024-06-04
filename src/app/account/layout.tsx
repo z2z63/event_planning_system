@@ -1,17 +1,12 @@
-"use client";
-
 import Image from "next/image";
-import { usePathname } from "next/navigation";
 import React from "react";
-import { GoogleReCaptchaProvider } from "react-google-recaptcha-v3";
+import AccountFormCard from "@/app/account/AccountFormCard";
 
-export default function Layout({ children }: { children: React.ReactNode }) {
-  const path = usePathname();
-  const last_segment = path.split("/").slice(-1)[0];
-  const card_title = {
-    login: "登录帐号",
-    register: "注册帐号",
-  }[last_segment];
+export default async function Layout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <div
       className="w-screen h-screen flex justify-around items-center"
@@ -28,25 +23,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <span>活动规划安排系统</span>
           </div>
         </div>
-        <div className="w-[500px] h-[500px] shadow-xl shadow-black/30 rounded-[10px] bg-white flex flex-col">
-          <div className="bg-[#E1DBEC] w-full h-[60px] flex justify-center items-center rounded-t-[10px] text-[30px]">
-            {card_title}
-          </div>
-          <RECAPTCHA>{children}</RECAPTCHA>
-        </div>
+        <AccountFormCard>{children}</AccountFormCard>
       </div>
     </div>
-  );
-}
-
-export function RECAPTCHA({ children }: { children: React.ReactNode }) {
-  const key = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
-  if (key === undefined) {
-    throw Error("NEXT_PUBLIC_RECAPTCHA_SITE_KEY");
-  }
-  return (
-    <GoogleReCaptchaProvider reCaptchaKey={key} useRecaptchaNet>
-      {children}
-    </GoogleReCaptchaProvider>
   );
 }

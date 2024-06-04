@@ -1,5 +1,4 @@
-import { NextRequest } from "next/server";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import * as jose from "jose";
 import { JOSEError } from "jose/errors";
 
@@ -30,5 +29,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/"],
+  matcher: ["/", "/activity/:path*", "/api/:path*"],
 };

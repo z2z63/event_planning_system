@@ -1,4 +1,5 @@
-import React, { useCallback, useEffect, useState } from "react";
+"use client";
+import React, { useCallback, useState } from "react";
 import { GoogleReCaptcha } from "react-google-recaptcha-v3";
 
 export default function useRecaptcha(): [

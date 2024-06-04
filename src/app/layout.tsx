@@ -4,6 +4,7 @@ import React from "react";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import StyleDowngrade from "./StyleDowngrade";
 import { StoreProvider } from "@/app/StoreProvider";
+import { PublicEnvScript } from "next-runtime-env";
 
 export const metadata: Metadata = {
   title: "活动安排规划系统",
@@ -17,6 +18,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh">
+      <head>
+        <title></title>
+        <PublicEnvScript />
+      </head>
       <body>
         <StyleDowngrade>
           <AntdRegistry>

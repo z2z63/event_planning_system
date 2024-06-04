@@ -1,11 +1,8 @@
-import {
-  combineReducers,
-  combineSlices,
-  configureStore,
-} from "@reduxjs/toolkit";
-import { groupSlice } from "@/app/(with_session)/activity/create/slice";
+import { combineSlices, configureStore } from "@reduxjs/toolkit";
+import { groupSlice } from "@/app/(with_session)/activity/create/UserGroupSlice";
+import { TimelineSlice } from "@/app/(with_session)/activity/create/TimelineSlice";
 
-const rootReducer = combineSlices(groupSlice);
+const rootReducer = combineSlices(groupSlice, TimelineSlice);
 export type RootState = ReturnType<typeof rootReducer>;
 
 // `makeStore` encapsulates the store configuration to allow

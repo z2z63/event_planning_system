@@ -1,7 +1,7 @@
 "use server";
 import { createUser, verifyCredentials } from "@/app/lib/data";
 import * as jose from "jose";
-import { cookies, headers } from "next/headers";
+import { cookies } from "next/headers";
 import { FieldType as LoginFieldType } from "@/app/account/login/page";
 import { FieldType as RegisterFieldType } from "@/app/account/register/page";
 

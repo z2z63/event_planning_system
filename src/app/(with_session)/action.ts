@@ -9,7 +9,9 @@ export async function signOut() {
   redirect("/account/login");
 }
 
-export async function searchUsersByPrefix(prefix: string) {
+export async function searchUsersByPrefix(
+  prefix: string,
+): Promise<{ id: number; username: string }[]> {
   if (prefix === "") {
     return [];
   }

@@ -11,7 +11,10 @@ export default async function HeaderLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const jwt = cookies().get("jwt")!.value;
+  const jwt = cookies().get("jwt")?.value;
+  if (jwt === undefined) {
+    throw Error("not login");
+  }
   const secret = new TextEncoder().encode(process.env.SECRET);
 
   const payload: jose.JWTPayload & { username: string } = jose.decodeJwt(jwt);

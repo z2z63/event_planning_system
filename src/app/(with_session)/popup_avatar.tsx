@@ -1,6 +1,6 @@
 "use client";
-import { Avatar, Button, Dropdown, Popover } from "antd";
 import type { MenuProps } from "antd";
+import { Avatar, Button, Dropdown } from "antd";
 import React from "react";
 import { signOut } from "@/app/(with_session)/action";
 

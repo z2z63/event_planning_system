@@ -3,5 +3,13 @@
 @layer tailwind-base {
     @tailwind base;
 }
+
 @tailwind components;
 @tailwind utilities;
+
+.tiptap.ProseMirror {
+    min-height: 300px;
+    width: 600px;
+    padding: 1px;
+    border: dashed 1px gray;
+}

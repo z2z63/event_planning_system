@@ -47,7 +47,7 @@ export const groupSlice = createSlice({
       ) => {
         const it = state.group.find((e) => e.id == action.payload.id);
         if (it === undefined) {
-          throw Error("id not found");
+          throw new Error("id not found");
         }
         it.data = action.payload.data;
       },
@@ -56,7 +56,7 @@ export const groupSlice = createSlice({
       (state, action: { type: string; payload: number }) => {
         const it = state.group.findIndex((e) => e.id == action.payload);
         if (it === -1) {
-          throw Error("id not found");
+          throw new Error("id not found");
         }
         state.group.splice(it, 1);
       },
