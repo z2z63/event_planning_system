@@ -15,7 +15,12 @@ import React from "react";
 export default function useUserGroupsInput() {
   const group = useAppSelector(selectAllUserGroup);
   const dispatch = useAppDispatch();
-  return (
+
+  function getUserGroupData() {
+    return group;
+  }
+
+  const UserGroupsInput = (
     <>
       <List
         dataSource={group}
@@ -44,6 +49,7 @@ export default function useUserGroupsInput() {
       </Button>
     </>
   );
+  return { UserGroupsInput, getUserGroupData };
 }
 
 function SingleUserGroupComponent(
@@ -74,7 +80,7 @@ function SingleUserGroupComponent(
     <li key={userGroup.id} className="flex my-[20px]">
       <Input
         type="text"
-        value={userGroup.groupName}
+        defaultValue={userGroup.groupName}
         className="w-[100px] mx-[10px]"
       />
       <Mentions

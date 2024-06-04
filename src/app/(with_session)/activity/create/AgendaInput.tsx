@@ -15,6 +15,10 @@ export default function useAgendaInput() {
   const dispatch = useAppDispatch();
   const allAgenda = useAppSelector(selectAllAgenda);
 
+  function getAgendaData() {
+    return allAgenda;
+  }
+
   const items = useMemo<StepProps[]>(() => {
     let items: StepProps[] = [];
     for (let agenda of allAgenda) {
@@ -26,7 +30,7 @@ export default function useAgendaInput() {
     return items;
   }, [allAgenda, dispatch]);
 
-  return (
+  const AgendaInput = (
     <div>
       <span className="text-[18px] my-[20px]">议程编辑</span>
       <Steps direction="vertical" className=" mt-[40px]" items={items} />
@@ -46,6 +50,7 @@ export default function useAgendaInput() {
       </Button>
     </div>
   );
+  return { AgendaInput, getAgendaData };
 }
 
 function stepTitle(

@@ -1,6 +1,7 @@
 import prisma from "./db";
 import * as crypto from "node:crypto";
 import { md5 } from "js-md5";
+import { Activity, Agenda } from "@prisma/client";
 
 export async function createUser({
   username,
@@ -73,4 +74,14 @@ export async function createBlob(data: Buffer) {
     },
   });
   return id;
+}
+
+export async function createActivity(
+  activity: Omit<Activity, "expenditure">,
+  usersId: number[],
+  agenda: Omit<Agenda, "activityId" | "id">,
+) {
+  return prisma.activity.create({
+    data: activity,
+  });
 }

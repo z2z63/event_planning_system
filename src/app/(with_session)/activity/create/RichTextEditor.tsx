@@ -12,7 +12,15 @@ export default function useRichTextEditor() {
     content: "<h4>请输入活动内容，支持富文本，支持markdown</h4>",
   });
   const levels: Level[] = [1, 2, 3, 4, 5];
-  return (
+
+  function getEditorData() {
+    if (editor === null) {
+      throw Error("RichTextEditor not initialized");
+    }
+    return editor.getHTML();
+  }
+
+  const RichTextEditor = (
     <div className="my-[20px] w-[600px]">
       <span className="text-[18px] mb-[20px]">活动内容</span>
       <div className="flex justify-around w-[500px] my-[10px] [&_i]:font-bold">
@@ -63,4 +71,5 @@ export default function useRichTextEditor() {
       <EditorContent editor={editor} className="prose" />
     </div>
   );
+  return { RichTextEditor, getEditorData };
 }
