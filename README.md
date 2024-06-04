@@ -1,8 +1,12 @@
+# 在线访问
+
+已使用vercel部署本项目 [event-planning-system.vercel.app](https://event-planning-system.vercel.app/)  
+同时也使用了我的个人域名做CNAME：[vercel.virtualfuture.top](https://event-planning-system.vercel.app/)
 # 如何运行
 
 1. 安装node22
 2. `npm install`安装依赖
-3. 参考<.env.template>的注释，填写密钥等信息后，重命名为`.env`
+3. 参考[.env.template](.env.template)的注释，填写密钥等信息后，重命名为`.env`
 4.
    - 开发模式
  ```shell
@@ -20,7 +24,7 @@
 
 ## 使用docker
 
-参考<./env.template>的注释，填写密钥等信息后，重命名为`.env`  
+参考[.env.template](.env.template)的注释，填写密钥等信息后，重命名为`.env`  
 在项目根目录执行
 
 ```shell
