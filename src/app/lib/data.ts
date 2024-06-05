@@ -76,12 +76,35 @@ export async function createBlob(data: Buffer) {
   return id;
 }
 
+export async function username2Id(usernameList: string[]) {
+  const data = await prisma.user.findMany({
+    where: {
+      username: {
+        in: usernameList,
+      },
+    },
+  });
+  return data.map((e) => e.id);
+}
+
 export async function createActivity(
-  activity: Omit<Activity, "expenditure">,
-  usersId: number[],
-  agenda: Omit<Agenda, "activityId" | "id">,
+  activity: Omit<Activity, "expenditure" | "id">,
+  userGroup: { groupName: string; info: string; userIdList: number[] }[],
+  agenda: Omit<Agenda, "activityId" | "id">[],
 ) {
   return prisma.activity.create({
-    data: activity,
+    data: {
+      ...activity,
+      Agenda: {
+        create: agenda,
+      },
+      ParticipantGroup: {
+        create: userGroup.map((e, i) => ({
+          name: e.groupName,
+          info: e.info,
+          seq: i,
+        })),
+      },
+    },
   });
 }

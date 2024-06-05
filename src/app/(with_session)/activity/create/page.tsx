@@ -8,13 +8,21 @@ import {
   OverviewFormDataType,
   useOverviewForm,
 } from "@/app/(with_session)/activity/create/OverviewForm";
+import { newActivity } from "@/app/(with_session)/action";
+
 
 export default function Page() {
-  function onSubmit(overviewFormData: OverviewFormDataType) {
+  async function onSubmit(overviewFormData: OverviewFormDataType) {
     console.log(overviewFormData);
     console.log(getEditorData());
     console.log(getUserGroupData());
     console.log(getAgendaData());
+    await newActivity(
+      overviewFormData,
+      getEditorData(),
+      getUserGroupData(),
+      getAgendaData(),
+    );
   }
 
   const { AgendaInput, getAgendaData } = useAgendaInput();

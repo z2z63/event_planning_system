@@ -28,6 +28,7 @@ model User {
 model Activity {
   id                  Int                   @id @default(autoincrement())
   name                String                @db.VarChar(128)
+  info  String @db.Text
   startTime           DateTime
   endTime             DateTime
   budget              Decimal               @db.Money
@@ -38,7 +39,7 @@ model Activity {
   Notification        Notification[]
   NotificationComfirm NotificationComfirm[]
   Agenda              Agenda[]
-  cover  Blob @relation(fields: [blobId], references: [id])
+  cover Blob   @relation(fields: [blobId], references: [id])
   blobId Int
 }
 

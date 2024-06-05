@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { Button, Input, StepProps, Steps } from "antd";
+import { Button, DatePicker, Input, StepProps, Steps } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import { useAppDispatch, useAppSelector } from "@/app/hook";
 import {
@@ -8,14 +8,21 @@ import {
   selectAllAgenda,
   TimelineType,
   updateAgendaContent,
+  updateAgendaDateRange,
   updateAgendaName,
 } from "@/app/(with_session)/activity/create/TimelineSlice";
+import { FormInputIncompleteError } from "@/app/(with_session)/activity/create/OverviewForm";
 
 export default function useAgendaInput() {
   const dispatch = useAppDispatch();
   const allAgenda = useAppSelector(selectAllAgenda);
 
-  function getAgendaData() {
+  function getAgendaData(): Omit<TimelineType, "id">[] {
+    for (const agenda of allAgenda) {
+      if (agenda.startTime === null || agenda.endTime === null) {
+        throw new FormInputIncompleteError("请完成日程日期范围填写");
+      }
+    }
     return allAgenda;
   }
 
@@ -85,16 +92,30 @@ function StepDescription(
   dispatch: ReturnType<typeof useAppDispatch>,
 ) {
   return (
-    <Input.TextArea
-      className="w-[400px] max-h-[300px] min-h-[100px] my-[20px]"
-      key={agenda.id}
-      autoSize
-      value={agenda.content}
-      onChange={(e) =>
-        dispatch(
-          updateAgendaContent({ id: agenda.id, content: e.target.value }),
-        )
-      }
-    />
+    <div key={agenda.id} className="flex flex-col">
+      <DatePicker.RangePicker
+        showTime
+        format="YYYY-MM-DD HH:mm:ss"
+        className="w-[400px] mt-[10px]"
+        defaultValue={[agenda.startTime, agenda.endTime]}
+        onChange={(e) => {
+          if (e === null) {
+            return;
+          }
+          console.log(e);
+          dispatch(updateAgendaDateRange({ id: agenda.id, range: e }));
+        }}
+      />
+      <Input.TextArea
+        className="w-[400px] max-h-[300px] min-h-[100px] mt-[10px] mb-[20px]"
+        autoSize
+        defaultValue={agenda.content}
+        onChange={(e) =>
+          dispatch(
+            updateAgendaContent({ id: agenda.id, content: e.target.value }),
+          )
+        }
+      />
+    </div>
   );
 }

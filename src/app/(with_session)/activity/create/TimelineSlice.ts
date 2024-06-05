@@ -1,9 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { Dayjs } from "dayjs";
 
 export type TimelineType = {
   agendaName: string;
   id: number;
   content: string;
+  startTime: Dayjs | null;
+  endTime: Dayjs | null;
 };
 type TimelineState = {
   seq: number;
@@ -17,6 +20,8 @@ const initialState: TimelineState = {
       agendaName: "新建议程",
       id: 0,
       content: "请输入议程内容",
+      startTime: null,
+      endTime: null,
     },
   ],
 };
@@ -30,6 +35,8 @@ export const TimelineSlice = createSlice({
         agendaName: "新建议程",
         id: state.seq,
         content: "请输入议程内容",
+        startTime: null,
+        endTime: null,
       });
     }),
     deleteAgenda: create.reducer((state, action: PayloadAction<number>) => {
@@ -47,6 +54,22 @@ export const TimelineSlice = createSlice({
           throw new Error("id not found");
         }
         state.agendas[it].content = action.payload.content;
+      },
+    ),
+    updateAgendaDateRange: create.reducer(
+      (
+        state,
+        action: PayloadAction<{
+          id: number;
+          range: [Dayjs | null, Dayjs | null];
+        }>,
+      ) => {
+        const it = state.agendas.findIndex((e) => e.id === action.payload.id);
+        if (it === -1) {
+          throw new Error("id not found");
+        }
+        state.agendas[it].startTime = action.payload.range[0];
+        state.agendas[it].endTime = action.payload.range[1];
       },
     ),
     updateAgendaName: create.reducer(
@@ -69,5 +92,6 @@ export const {
   deleteAgenda,
   updateAgendaContent,
   updateAgendaName,
+  updateAgendaDateRange,
 } = TimelineSlice.actions;
 export const { selectAllAgenda } = TimelineSlice.selectors;

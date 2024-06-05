@@ -1,9 +1,11 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export type UserGroupType = {
   groupName: string;
   id: number;
-  data: { label: string; key: string; value: string }[];
+  info: string;
+  mentionProps: { label: string; key: string; value: string }[];
+  selected: string[];
 };
 
 export type UserGroupsState = {
@@ -17,7 +19,9 @@ const initialState: UserGroupsState = {
     {
       groupName: "默认组",
       id: 0,
-      data: [],
+      info: "请输入用户组说明",
+      mentionProps: [],
+      selected: [],
     },
   ],
 };
@@ -31,34 +35,52 @@ export const groupSlice = createSlice({
       state.group.push({
         groupName: "新建组",
         id: state.seq,
-        data: [],
+        info: "请输入用户组说明",
+        mentionProps: [],
+        selected: [],
       });
     }),
     searchUser: create.reducer(
       (
         state,
-        action: {
-          type: string;
-          payload: {
-            id: number;
-            data: { label: string; key: string; value: string }[];
-          };
-        },
+        action: PayloadAction<{
+          groupId: number;
+          data: { label: string; key: string; value: string }[];
+        }>,
       ) => {
-        const it = state.group.find((e) => e.id == action.payload.id);
-        if (it === undefined) {
-          throw new Error("id not found");
-        }
-        it.data = action.payload.data;
-      },
-    ),
-    deleteGroup: create.reducer(
-      (state, action: { type: string; payload: number }) => {
-        const it = state.group.findIndex((e) => e.id == action.payload);
+        const it = state.group.findIndex((e) => e.id == action.payload.groupId);
         if (it === -1) {
           throw new Error("id not found");
         }
-        state.group.splice(it, 1);
+        state.group[it].mentionProps = action.payload.data;
+      },
+    ),
+    deleteGroup: create.reducer((state, action: PayloadAction<number>) => {
+      const it = state.group.findIndex((e) => e.id == action.payload);
+      if (it === -1) {
+        throw new Error("id not found");
+      }
+      state.group.splice(it, 1);
+    }),
+    updateGroupInfo: create.reducer(
+      (state, action: PayloadAction<{ id: number; info: string }>) => {
+        const it = state.group.findIndex((e) => e.id == action.payload.id);
+        if (it === -1) {
+          throw new Error("id not found");
+        }
+        state.group[it].info = action.payload.info;
+      },
+    ),
+    onSelectChange: create.reducer(
+      (
+        state,
+        action: PayloadAction<{ groupId: number; usernameList: string[] }>,
+      ) => {
+        const it = state.group.findIndex((e) => e.id == action.payload.groupId);
+        if (it === -1) {
+          throw new Error("id not found");
+        }
+        state.group[it].selected = action.payload.usernameList;
       },
     ),
   }),
@@ -67,6 +89,12 @@ export const groupSlice = createSlice({
   },
 });
 
-export const { addGroup, searchUser, deleteGroup } = groupSlice.actions;
+export const {
+  addGroup,
+  searchUser,
+  deleteGroup,
+  onSelectChange,
+  updateGroupInfo,
+} = groupSlice.actions;
 
 export const { selectAllUserGroup } = groupSlice.selectors;

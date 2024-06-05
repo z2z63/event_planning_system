@@ -11,6 +11,7 @@ CREATE TABLE "Activity"
     "budget"      MONEY        NOT NULL,
     "expenditure" MONEY        NOT NULL DEFAULT 0,
     "blobId"      INTEGER      NOT NULL,
+    "info" TEXT NOT NULL,
 
     CONSTRAINT "Activity_pkey" PRIMARY KEY ("id")
 );
@@ -31,11 +32,11 @@ CREATE TABLE "Agenda"
 -- CreateTable
 CREATE TABLE "Attachment"
 (
-    "id"              SERIAL       NOT NULL,
-    "filename"        VARCHAR(128) NOT NULL,
-    "visibility"      BIGINT       NOT NULL,
-    "size"            INTEGER      NOT NULL,
-    "blobId"          INTEGER      NOT NULL,
+    "id"         SERIAL       NOT NULL,
+    "filename"   VARCHAR(128) NOT NULL,
+    "visibility" BIGINT       NOT NULL,
+    "size"       INTEGER      NOT NULL,
+    "blobId"     INTEGER      NOT NULL,
     "reimbursementId" INTEGER,
 
     CONSTRAINT "Attachment_pkey" PRIMARY KEY ("id")
@@ -53,9 +54,9 @@ CREATE TABLE "Blob"
 -- CreateTable
 CREATE TABLE "Notification"
 (
-    "id"         SERIAL  NOT NULL,
-    "content"    TEXT    NOT NULL,
-    "visibility" BIGINT  NOT NULL,
+    "id"         SERIAL NOT NULL,
+    "content"    TEXT   NOT NULL,
+    "visibility" BIGINT NOT NULL,
     "activityId" INTEGER NOT NULL,
 
     CONSTRAINT "Notification_pkey" PRIMARY KEY ("id")
@@ -64,9 +65,9 @@ CREATE TABLE "Notification"
 -- CreateTable
 CREATE TABLE "NotificationComfirm"
 (
-    "id"         SERIAL  NOT NULL,
+    "id"     SERIAL  NOT NULL,
     "activityId" INTEGER NOT NULL,
-    "userId"     INTEGER NOT NULL,
+    "userId" INTEGER NOT NULL,
 
     CONSTRAINT "NotificationComfirm_pkey" PRIMARY KEY ("id")
 );
@@ -101,7 +102,7 @@ CREATE TABLE "Reimbursement"
 -- CreateTable
 CREATE TABLE "Resource"
 (
-    "id"   SERIAL       NOT NULL,
+    "id" SERIAL NOT NULL,
     "name" VARCHAR(128) NOT NULL,
 
     CONSTRAINT "Resource_pkey" PRIMARY KEY ("id")
@@ -110,9 +111,9 @@ CREATE TABLE "Resource"
 -- CreateTable
 CREATE TABLE "ResourceGroup"
 (
-    "id"   SERIAL       NOT NULL,
+    "id"   SERIAL NOT NULL,
     "name" VARCHAR(128) NOT NULL,
-    "info" TEXT         NOT NULL,
+    "info" TEXT   NOT NULL,
 
     CONSTRAINT "ResourceGroup_pkey" PRIMARY KEY ("id")
 );
@@ -120,10 +121,10 @@ CREATE TABLE "ResourceGroup"
 -- CreateTable
 CREATE TABLE "User"
 (
-    "id"       SERIAL      NOT NULL,
+    "id"   SERIAL   NOT NULL,
     "username" VARCHAR(20) NOT NULL,
-    "salt"     CHAR(64)    NOT NULL,
-    "hash"     CHAR(32)    NOT NULL,
+    "salt" CHAR(64) NOT NULL,
+    "hash" CHAR(32) NOT NULL,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -131,11 +132,11 @@ CREATE TABLE "User"
 -- CreateTable
 CREATE TABLE "UserGroup"
 (
-    "id"         SERIAL  NOT NULL,
-    "name"       TEXT    NOT NULL,
-    "info"       TEXT    NOT NULL,
+    "id"   SERIAL  NOT NULL,
+    "name" TEXT    NOT NULL,
+    "info" TEXT    NOT NULL,
     "activityId" INTEGER NOT NULL,
-    "seq"        INTEGER NOT NULL,
+    "seq"  INTEGER NOT NULL,
 
     CONSTRAINT "UserGroup_pkey" PRIMARY KEY ("id")
 );

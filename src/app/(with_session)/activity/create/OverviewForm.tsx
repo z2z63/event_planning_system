@@ -11,19 +11,23 @@ import { PlusOutlined } from "@ant-design/icons";
 import Image from "next/image";
 import React, { useRef, useState } from "react";
 import { Dayjs } from "dayjs";
+import Decimal from "decimal.js";
+import { UploadFile } from "antd/es/upload/interface";
 
 export type OverviewFormDataType = {
   activityName: string;
   startTime: Date;
   endTime: Date;
-  budget: number;
+  budget: Decimal;
   fileId: number;
 };
+
+export class FormInputIncompleteError extends Error {}
 
 type OverviewFormRawDataType = {
   activityName: string;
   timeRange: [Dayjs, Dayjs];
-  budget: number;
+  budget: string;
   fileId: number;
 };
 
@@ -31,8 +35,8 @@ export function useOverviewForm(
   onSubmitFinish: (data: OverviewFormDataType) => void,
 ) {
   const [fileId, setFileId] = useState(-1);
-  const [data, setData] = useState<OverviewFormDataType>();
   const form = useRef<FormInstance | null>(null);
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
 
   function triggerFormSubmit() {
     if (form.current === null) {
@@ -46,10 +50,9 @@ export function useOverviewForm(
       activityName: data.activityName,
       startTime: data.timeRange[0].toDate(),
       endTime: data.timeRange[1].toDate(),
-      budget: data.budget,
+      budget: new Decimal(data.budget),
       fileId: fileId,
     };
-    setData(newData);
     onSubmitFinish(newData);
   }
 
@@ -75,15 +78,14 @@ export function useOverviewForm(
         <Upload
           accept="image/png, image/gif, image/jpeg"
           action="/api/blob/upload"
-          isImageUrl={() => true}
+          fileList={fileList}
           maxCount={1}
-          itemRender={(originNode, file, fileList, actions) => {
-            return <></>;
-          }}
+          itemRender={() => <></>}
           onChange={({ file, fileList, event }) => {
             if (file.status === "done") {
               setFileId(file.response.id);
             }
+            setFileList(fileList);
           }}
         >
           {fileId === -1 ? (
