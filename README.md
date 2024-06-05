@@ -1,7 +1,7 @@
-# 在线访问
+# 在线演示
 
 已使用vercel部署本项目 [event-planning-system.vercel.app](https://event-planning-system.vercel.app/)  
-同时也使用了我的个人域名做CNAME：[vercel.virtualfuture.top](https://event-planning-system.vercel.app/)
+同时也使用了我的个人域名做CNAME：[vercel.virtualfuture.top](https://vercel.virtualfuture.top/)
 # 如何运行
 
 1. 安装node22
