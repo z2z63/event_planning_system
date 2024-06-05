@@ -5,7 +5,7 @@ import { JOSEError } from "jose/errors";
 export async function middleware(request: NextRequest) {
   const gotoLogin = NextResponse.redirect(
     new URL(
-      "/account/login?redirect=" + encodeURIComponent(request.url),
+      "/account/login?redirect=" + encodeURIComponent(request.nextUrl.pathname),
       request.url,
     ),
   );
@@ -25,7 +25,6 @@ export async function middleware(request: NextRequest) {
     }
     throw error;
   }
-  console.log("-----");
 }
 
 export const config = {
