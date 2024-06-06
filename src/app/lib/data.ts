@@ -23,12 +23,15 @@ export async function verifyCredentials({
 }: {
   username: string;
   password: string;
-}) {
+}): Promise<{ passed: false } | { passed: true; id: number }> {
   const user = await getUserByUsername(username);
   if (user === null) {
-    return false;
+    return { passed: false };
   }
-  return passwordHash(password, user.salt) === user.hash;
+  if (passwordHash(password, user.salt) !== user.hash) {
+    return { passed: false };
+  }
+  return { passed: true, id: user.id };
 }
 
 export async function getUserByUsername(username: string) {
@@ -103,7 +106,41 @@ export async function createActivity(
           name: e.groupName,
           info: e.info,
           seq: i,
+          participants: {
+            connect: e.userIdList.map((u) => ({ id: u })),
+          },
         })),
+      },
+    },
+  });
+}
+
+export async function getActivityByUserId(userId: number) {
+  return prisma.activity.findMany({
+    where: {
+      ParticipantGroup: {
+        every: {
+          participants: {
+            every: {
+              id: userId,
+            },
+          },
+        },
+      },
+    },
+    include: {
+      ParticipantGroup: {
+        where: {
+          seq: 1,
+        },
+        include: {
+          participants: {
+            select: {
+              id: true,
+              username: true,
+            },
+          },
+        },
       },
     },
   });

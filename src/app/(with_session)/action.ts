@@ -2,11 +2,18 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { createActivity, getUsersByPrefix, username2Id } from "@/app/lib/data";
+import {
+  createActivity,
+  getActivityByUserId,
+  getUsersByPrefix,
+  username2Id,
+} from "@/app/lib/data";
 import { OverviewFormDataType } from "@/app/(with_session)/activity/create/OverviewForm";
 import { UserGroupType } from "@/app/(with_session)/activity/create/UserGroupSlice";
 import { TimelineType } from "@/app/(with_session)/activity/create/TimelineSlice";
 import { Activity, Agenda } from "@prisma/client";
+import Decimal from "decimal.js";
+import { CardData } from "@/app/(with_session)/HomePage";
 
 export async function signOut() {
   cookies().delete("jwt");
@@ -29,10 +36,12 @@ export async function newActivity(
   agendaData: Omit<TimelineType, "id">[],
 ) {
   const activity: Omit<Activity, "expenditure" | "id"> = {
-    ...overviewFormData,
+    startTime: overviewFormData.startTime,
+    endTime: overviewFormData.endTime,
     info: editorData,
     name: overviewFormData.activityName,
     blobId: overviewFormData.fileId,
+    budget: new Decimal(overviewFormData.budget),
   };
   const newUserGroups: {
     groupName: string;
@@ -48,12 +57,36 @@ export async function newActivity(
   const newAgendaData: Omit<Agenda, "activityId" | "id">[] = [];
   for (const agenda of agendaData) {
     newAgendaData.push({
-      ...agenda,
       name: agenda.agendaName,
       info: agenda.content,
-      startTime: agenda.startTime!.toDate(),
-      endTime: agenda.endTime!.toDate(),
+      startTime: agenda.startTime!,
+      endTime: agenda.endTime!,
     });
   }
   await createActivity(activity, newUserGroups, newAgendaData);
+}
+
+export async function getActivityCardData(userId: number): Promise<CardData[]> {
+  const rawDataList = await getActivityByUserId(userId);
+  console.dir(rawDataList, { depth: null });
+  const now = Date.now();
+  return rawDataList.map((e) => {
+    let status: "planning" | "progressing" | "ended";
+    if (now <= e.startTime.getTime()) {
+      status = "planning";
+    } else if (now <= e.endTime.getTime()) {
+      status = "progressing";
+    } else {
+      status = "ended";
+    }
+    return {
+      id: e.id,
+      title: e.name,
+      organizers: e.ParticipantGroup.find((e) => e.seq === 1)!.participants.map(
+        (e) => e.username,
+      ),
+      status: status,
+      imgId: e.blobId,
+    };
+  });
 }

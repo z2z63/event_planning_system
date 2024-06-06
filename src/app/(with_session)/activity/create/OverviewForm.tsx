@@ -11,14 +11,13 @@ import { PlusOutlined } from "@ant-design/icons";
 import Image from "next/image";
 import React, { useRef, useState } from "react";
 import { Dayjs } from "dayjs";
-import Decimal from "decimal.js";
 import { UploadFile } from "antd/es/upload/interface";
 
 export type OverviewFormDataType = {
   activityName: string;
   startTime: Date;
   endTime: Date;
-  budget: Decimal;
+  budget: string;
   fileId: number;
 };
 
@@ -50,7 +49,7 @@ export function useOverviewForm(
       activityName: data.activityName,
       startTime: data.timeRange[0].toDate(),
       endTime: data.timeRange[1].toDate(),
-      budget: new Decimal(data.budget),
+      budget: data.budget,
       fileId: fileId,
     };
     onSubmitFinish(newData);
@@ -81,7 +80,7 @@ export function useOverviewForm(
           fileList={fileList}
           maxCount={1}
           itemRender={() => <></>}
-          onChange={({ file, fileList, event }) => {
+          onChange={({ file, fileList }) => {
             if (file.status === "done") {
               setFileId(file.response.id);
             }

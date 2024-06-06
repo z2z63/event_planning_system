@@ -5,6 +5,7 @@ import * as jose from "jose";
 import { cookies } from "next/headers";
 import { PopUpAvatar } from "@/app/(with_session)/popup_avatar";
 import Link from "next/link";
+import SessionProvider from "@/app/(with_session)/SessionProvider";
 
 export default async function HeaderLayout({
   children,
@@ -15,9 +16,9 @@ export default async function HeaderLayout({
   if (jwt === undefined) {
     throw Error("not login");
   }
-  const secret = new TextEncoder().encode(process.env.SECRET);
 
-  const payload: jose.JWTPayload & { username: string } = jose.decodeJwt(jwt);
+  const payload: jose.JWTPayload & { username: string; id: number } =
+    jose.decodeJwt(jwt);
   return (
     <div className="flex flex-col">
       <header className="w-full flex justify-between border-b-[1px] border-black">
@@ -41,7 +42,7 @@ export default async function HeaderLayout({
           </div>
         </div>
       </header>
-      {children}
+      <SessionProvider session={payload}>{children}</SessionProvider>
     </div>
   );
 }

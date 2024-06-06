@@ -1,12 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Dayjs } from "dayjs";
 
 export type TimelineType = {
   agendaName: string;
   id: number;
   content: string;
-  startTime: Dayjs | null;
-  endTime: Dayjs | null;
+  startTime: Date | null;
+  endTime: Date | null;
 };
 type TimelineState = {
   seq: number;
@@ -61,7 +60,7 @@ export const TimelineSlice = createSlice({
         state,
         action: PayloadAction<{
           id: number;
-          range: [Dayjs | null, Dayjs | null];
+          range: [Date | null, Date | null];
         }>,
       ) => {
         const it = state.agendas.findIndex((e) => e.id === action.payload.id);

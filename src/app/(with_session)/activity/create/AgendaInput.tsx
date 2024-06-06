@@ -12,6 +12,7 @@ import {
   updateAgendaName,
 } from "@/app/(with_session)/activity/create/TimelineSlice";
 import { FormInputIncompleteError } from "@/app/(with_session)/activity/create/OverviewForm";
+import dayjs from "dayjs";
 
 export default function useAgendaInput() {
   const dispatch = useAppDispatch();
@@ -97,13 +98,22 @@ function StepDescription(
         showTime
         format="YYYY-MM-DD HH:mm:ss"
         className="w-[400px] mt-[10px]"
-        defaultValue={[agenda.startTime, agenda.endTime]}
+        defaultValue={
+          agenda.startTime === null && agenda.endTime === null
+            ? undefined
+            : [dayjs(agenda.startTime), dayjs(agenda.endTime)]
+        }
         onChange={(e) => {
           if (e === null) {
             return;
           }
-          console.log(e);
-          dispatch(updateAgendaDateRange({ id: agenda.id, range: e }));
+          console.log(e[0]?.toDate());
+          dispatch(
+            updateAgendaDateRange({
+              id: agenda.id,
+              range: [e[0]?.toDate() ?? null, e[1]?.toDate() ?? null],
+            }),
+          );
         }}
       />
       <Input.TextArea

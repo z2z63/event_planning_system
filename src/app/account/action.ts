@@ -12,11 +12,12 @@ export async function server_login(data: LoginFieldType, token: string) {
   if (!(await recaptcha_verify(token))) {
     return false;
   }
-  if (!(await verifyCredentials(data))) {
+  const result = await verifyCredentials(data);
+  if (!result.passed) {
     return false;
   }
   const alg = "HS256";
-  const jwt = await new jose.SignJWT(data)
+  const jwt = await new jose.SignJWT({ username: data.username, id: result.id })
     .setProtectedHeader({ alg })
     .setIssuedAt()
     .setIssuer("urn:example:issuer")
@@ -46,7 +47,7 @@ export async function server_register(data: RegisterFieldType, token: string) {
 }
 
 type ReCAPTCHAResponse = {
-  success: true | false;
+  success: boolean;
   challenge_ts: string; // timestamp of the challenge load (ISO format yyyy-MM-dd'T'HH:mm:ssZZ)
   hostname: string; // the hostname of the site where the reCAPTCHA was solved
   "error-codes": any; // optional
