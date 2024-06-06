@@ -63,7 +63,8 @@ export async function newActivity(
       endTime: agenda.endTime!,
     });
   }
-  await createActivity(activity, newUserGroups, newAgendaData);
+  const record = await createActivity(activity, newUserGroups, newAgendaData);
+  return record.id;
 }
 
 export async function getActivityCardData(userId: number): Promise<CardData[]> {
@@ -82,7 +83,7 @@ export async function getActivityCardData(userId: number): Promise<CardData[]> {
     return {
       id: e.id,
       title: e.name,
-      organizers: e.ParticipantGroup.find((e) => e.seq === 1)!.participants.map(
+      organizers: e.ParticipantGroup.find((e) => e.seq === 0)!.participants.map(
         (e) => e.username,
       ),
       status: status,

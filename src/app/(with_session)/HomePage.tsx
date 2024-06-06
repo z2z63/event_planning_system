@@ -60,7 +60,7 @@ export default function HomePage({ data }: { data: CardData[] }) {
         {data
           .filter((e) => statusFilter === null || e.status === statusFilter)
           .filter((e) =>
-            session.username in e.organizers
+            e.organizers.includes(session.username)
               ? participateFilter === "organize"
               : participateFilter === "participate",
           )
@@ -92,14 +92,13 @@ function Card(data: CardData) {
       href={`/activity/${data.id}`}
       className="bg-white w-[300px] h-[300px] rounded-[5px] m-[20px] flex flex-col hover:relative hover:bottom-[5px]"
       style={{ boxShadow: "0px 4px 10px 0px rgba(0, 0, 0, 0.3)" }}
-      key={data.title}
+      key={data.id}
     >
       <Image
         src={`/api/blob/${data.imgId}`}
         alt={"image of " + data.title}
         width={300}
         height={200}
-        objectFit="cover"
         className="object-cover h-[200px] rounded-t-[5px]"
       />
 

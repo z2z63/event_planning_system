@@ -81,6 +81,9 @@ export async function createBlob(data: Buffer) {
 
 export async function username2Id(usernameList: string[]) {
   const data = await prisma.user.findMany({
+    select: {
+      id: true,
+    },
     where: {
       username: {
         in: usernameList,
@@ -116,12 +119,13 @@ export async function createActivity(
 }
 
 export async function getActivityByUserId(userId: number) {
+  console.log(userId);
   return prisma.activity.findMany({
     where: {
       ParticipantGroup: {
-        every: {
+        some: {
           participants: {
-            every: {
+            some: {
               id: userId,
             },
           },
@@ -131,8 +135,28 @@ export async function getActivityByUserId(userId: number) {
     include: {
       ParticipantGroup: {
         where: {
-          seq: 1,
+          seq: 0,
         },
+        include: {
+          participants: {
+            select: {
+              id: true,
+              username: true,
+            },
+          },
+        },
+      },
+    },
+  });
+}
+
+export default async function getActivityById(activityId: number) {
+  return prisma.activity.findUnique({
+    where: {
+      id: activityId,
+    },
+    include: {
+      ParticipantGroup: {
         include: {
           participants: {
             select: {

@@ -60,7 +60,10 @@ function SingleUserGroupComponent(
   firstId: number,
 ) {
   async function _onChange(prefix: string) {
-    const usernameList = prefix.split("@").filter((e) => e !== "");
+    const usernameList = prefix
+      .split("@")
+      .filter((e) => e !== "")
+      .map((e) => e.trim());
     dispatch(onSelectChange({ groupId: userGroup.id, usernameList }));
     console.log(prefix);
     if (prefix.indexOf("@") !== -1) {

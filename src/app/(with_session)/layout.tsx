@@ -23,7 +23,13 @@ export default async function HeaderLayout({
     <div className="flex flex-col">
       <header className="w-full flex justify-between border-b-[1px] border-black">
         <Link href="/" className="flex justify-around items-center px-[10px]">
-          <Image src="/logo.svg" width={80} height={80} alt="logo" />
+          <Image
+            src="/logo.svg"
+            width={80}
+            height={80}
+            alt="logo"
+            className="h-[80px]"
+          />
           <span className="ml-[10px] text-[24px] w-[4em]">
             活动安排规划系统
           </span>

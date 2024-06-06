@@ -10,19 +10,19 @@ import {
 } from "@/app/(with_session)/activity/create/OverviewForm";
 import { newActivity } from "@/app/(with_session)/action";
 
-
 export default function Page() {
   async function onSubmit(overviewFormData: OverviewFormDataType) {
     console.log(overviewFormData);
     console.log(getEditorData());
     console.log(getUserGroupData());
     console.log(getAgendaData());
-    await newActivity(
+    const activityId = await newActivity(
       overviewFormData,
       getEditorData(),
       getUserGroupData(),
       getAgendaData(),
     );
+    window.location.href = `/activity/${activityId}`;
   }
 
   const { AgendaInput, getAgendaData } = useAgendaInput();
