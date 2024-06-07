@@ -150,7 +150,7 @@ export async function getActivityByUserId(userId: number) {
   });
 }
 
-export default async function getActivityById(activityId: number) {
+export async function getActivityById(activityId: number) {
   return prisma.activity.findUnique({
     where: {
       id: activityId,
@@ -166,6 +166,17 @@ export default async function getActivityById(activityId: number) {
           },
         },
       },
+    },
+  });
+}
+
+export async function getActivityNameById(activityId: number) {
+  return prisma.activity.findUnique({
+    where: {
+      id: activityId,
+    },
+    select: {
+      name: true,
     },
   });
 }

@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import {
   createActivity,
   getActivityByUserId,
+  getActivityNameById,
   getUsersByPrefix,
   username2Id,
 } from "@/app/lib/data";
@@ -90,4 +91,12 @@ export async function getActivityCardData(userId: number): Promise<CardData[]> {
       imgId: e.blobId,
     };
   });
+}
+
+export async function getActivityTitleName(id: number) {
+  const data = await getActivityNameById(id);
+  if (data === null) {
+    throw new Error("Activity not found");
+  }
+  return data.name;
 }

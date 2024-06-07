@@ -1,4 +1,4 @@
-import getActivityById from "@/app/lib/data";
+import { getActivityById } from "@/app/lib/data";
 
 export default async function Page({ params }: { params: { id: string } }) {
   const data = await getActivityById(Number(params.id));

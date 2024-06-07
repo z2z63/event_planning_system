@@ -3,9 +3,10 @@ import Image from "next/image";
 import dayjs from "dayjs";
 import * as jose from "jose";
 import { cookies } from "next/headers";
-import { PopUpAvatar } from "@/app/(with_session)/popup_avatar";
+import { PopUpAvatar } from "@/app/(with_session)/PopupAvatar";
 import Link from "next/link";
 import SessionProvider from "@/app/(with_session)/SessionProvider";
+import { HeadTitle } from "@/app/(with_session)/HeadTitle";
 
 export default async function HeaderLayout({
   children,
@@ -21,7 +22,7 @@ export default async function HeaderLayout({
     jose.decodeJwt(jwt);
   return (
     <div className="flex flex-col">
-      <header className="w-full flex justify-between border-b-[1px] border-black">
+      <header className="w-full flex justify-between items-center border-b-[1px] border-black">
         <Link href="/" className="flex justify-around items-center px-[10px]">
           <Image
             src="/logo.svg"
@@ -34,6 +35,7 @@ export default async function HeaderLayout({
             活动安排规划系统
           </span>
         </Link>
+        <HeadTitle className="text-[32px]" />
         <div className="flex justify-around items-center">
           <div className="flex flex-col">
             <span className="text-[18px] mb-[5px]">

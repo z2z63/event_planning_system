@@ -9,14 +9,14 @@
 3. 参考[.env.template](.env.template)的注释，填写密钥等信息后，重命名为`.env`
 4.
    - 开发模式
- ```shell
- npm run dev
- ```
+```shell
+npm run dev
+```
    - 生产模式
- ```shell
- npm run build
- npm run start
- ```
+```shell
+npm run build
+npm run start
+```
 
 启动服务后，前往<http://localhost:3000/>即可访问
 
