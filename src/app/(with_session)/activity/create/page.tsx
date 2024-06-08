@@ -12,10 +12,6 @@ import { newActivity } from "@/app/(with_session)/action";
 
 export default function Page() {
   async function onSubmit(overviewFormData: OverviewFormDataType) {
-    console.log(overviewFormData);
-    console.log(getEditorData());
-    console.log(getUserGroupData());
-    console.log(getAgendaData());
     const activityId = await newActivity(
       overviewFormData,
       getEditorData(),

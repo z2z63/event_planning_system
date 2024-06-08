@@ -84,11 +84,10 @@ export default function Layout({
   children: React.ReactNode;
   params: { id: string };
 }) {
-  console.log(params.id);
   return (
     <div className="flex">
       <Menu className="w-[250px]" items={items} />
-      <div className="flex flex-col">
+      <div className="flex flex-col grow">
         <MyBreadCrumb />
         {children}
       </div>

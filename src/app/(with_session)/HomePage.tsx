@@ -83,9 +83,9 @@ function Card(data: CardData) {
     ended: "已结束",
   }[data.status];
   const color = {
-    planning: "#B8B7B5",
-    progressing: "#3BA3DB",
-    ended: "#000000",
+    planning: "#e6f4ff",
+    progressing: "#1677ff",
+    ended: "rgba(0, 0, 0, 0.1)",
   }[data.status];
   return (
     <Link
@@ -106,9 +106,12 @@ function Card(data: CardData) {
         <span className="text-[24px] my-[10px]">{data.title}</span>
         <div className="flex justify-between w-full p-[10px]">
           <span className="text-[#989797]">{organizers}</span>
-          <div className="flex justify-between items-center">
-            <div className={`h-[20px] w-[20px] rounded-full bg-[${color}]`} />
-            <span>{status}</span>
+          <div className="flex items-center">
+            <div
+              className="h-[20px] w-[20px] rounded-full"
+              style={{ backgroundColor: color }}
+            />
+            <span className="ml-[10px]">{status}</span>
           </div>
         </div>
       </div>

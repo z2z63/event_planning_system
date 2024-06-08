@@ -65,11 +65,9 @@ function SingleUserGroupComponent(
       .filter((e) => e !== "")
       .map((e) => e.trim());
     dispatch(onSelectChange({ groupId: userGroup.id, usernameList }));
-    console.log(prefix);
     if (prefix.indexOf("@") !== -1) {
       prefix = prefix.slice(prefix.lastIndexOf("@") + 1);
     }
-    console.log(prefix);
     if (prefix === "") {
       return;
     }

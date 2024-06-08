@@ -8,7 +8,6 @@ import { FieldType as RegisterFieldType } from "@/app/account/register/page";
 const secret = new TextEncoder().encode(process.env.SECRET);
 
 export async function server_login(data: LoginFieldType, token: string) {
-  console.log(data);
   if (!(await recaptcha_verify(token))) {
     return false;
   }
@@ -66,6 +65,5 @@ async function recaptcha_verify(token: string) {
     body: formData,
   });
   const json: ReCAPTCHAResponse = await resp.json();
-  console.log(json);
   return json.success;
 }

@@ -16,7 +16,6 @@ export function HeadTitle(
     HTMLAttributes<HTMLSpanElement>,
 ) {
   const path = usePathname();
-  console.log(path);
   const [title, setTitle] = useState("");
   const [lastId, setLastId] = useState(-1);
   if (path === "/" && title !== "活动列表") {

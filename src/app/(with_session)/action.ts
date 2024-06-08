@@ -4,6 +4,8 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import {
   createActivity,
+  disconnectUserUserGroup,
+  getActivityById,
   getActivityByUserId,
   getActivityNameById,
   getUsersByPrefix,
@@ -70,7 +72,6 @@ export async function newActivity(
 
 export async function getActivityCardData(userId: number): Promise<CardData[]> {
   const rawDataList = await getActivityByUserId(userId);
-  console.dir(rawDataList, { depth: null });
   const now = Date.now();
   return rawDataList.map((e) => {
     let status: "planning" | "progressing" | "ended";
@@ -99,4 +100,17 @@ export async function getActivityTitleName(id: number) {
     throw new Error("Activity not found");
   }
   return data.name;
+}
+
+export async function getActivityBasicInfo(id: number) {
+  const data = await getActivityById(id);
+  if (data === null) {
+    throw new Error("Activity not found");
+  }
+  return data;
+}
+
+export async function deleteUserInUserGroup(userId: number, groupId: number) {
+  const record = await disconnectUserUserGroup(userId, groupId);
+  console.log(record);
 }

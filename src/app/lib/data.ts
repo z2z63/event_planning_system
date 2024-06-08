@@ -1,3 +1,4 @@
+"use server";
 import prisma from "./db";
 import * as crypto from "node:crypto";
 import { md5 } from "js-md5";
@@ -119,7 +120,6 @@ export async function createActivity(
 }
 
 export async function getActivityByUserId(userId: number) {
-  console.log(userId);
   return prisma.activity.findMany({
     where: {
       ParticipantGroup: {
@@ -166,6 +166,7 @@ export async function getActivityById(activityId: number) {
           },
         },
       },
+      Agenda: true,
     },
   });
 }
@@ -177,6 +178,24 @@ export async function getActivityNameById(activityId: number) {
     },
     select: {
       name: true,
+    },
+  });
+}
+
+export async function disconnectUserUserGroup(userId: number, groupId: number) {
+  return prisma.userGroup.update({
+    where: {
+      id: groupId,
+    },
+    data: {
+      participants: {
+        disconnect: {
+          id: userId,
+        },
+      },
+    },
+    include: {
+      participants: true,
     },
   });
 }

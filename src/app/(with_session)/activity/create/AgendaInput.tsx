@@ -107,7 +107,6 @@ function StepDescription(
           if (e === null) {
             return;
           }
-          console.log(e[0]?.toDate());
           dispatch(
             updateAgendaDateRange({
               id: agenda.id,
