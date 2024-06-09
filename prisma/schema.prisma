@@ -58,14 +58,12 @@ model Permission {
 }
 
 model Attachment {
-  id              Int            @id @default(autoincrement())
-  filename        String         @db.VarChar(128)
-  visibility      BigInt
-  size            Int
+  id         Int    @id @default(autoincrement())
+  filename   String @db.VarChar(128)
+  visibility BigInt
+  size       Int
   blob       Blob      @relation(fields: [blobId], references: [id])
   time       DateTime  @default(now())
-  Reimbursement   Reimbursement? @relation(fields: [reimbursementId], references: [id])
-  reimbursementId Int?
   blobId     Int       @unique
   Activity   Activity? @relation(fields: [activityId], references: [id])
   activityId Int?
@@ -78,19 +76,20 @@ model ResourceGroup {
 }
 
 model Reimbursement {
-  id          Int                 @id @default(autoincrement())
-  user        User                @relation("reimbursement applicant", fields: [userId], references: [id])
-  activity    Activity            @relation(fields: [activityId], references: [id])
-  amount      Decimal             @db.Money
-  info        String              @db.Text
-  status      ReimbursementStatus
-  handler    User     @relation("reimbursement handler", fields: [handlerId], references: [id])
-  handleTime DateTime
-  commemt    String   @db.Text
-  attachments Attachment[]
-  handlerId  Int
-  userId      Int
-  activityId  Int
+  id         Int                 @id @default(autoincrement())
+  user       User                @relation("reimbursement applicant", fields: [userId], references: [id])
+  activity   Activity            @relation(fields: [activityId], references: [id])
+  title      String              @db.VarChar(128)
+  amount     Decimal             @db.Money
+  info       String              @db.Text
+  status     ReimbursementStatus
+  handler    User?               @relation("reimbursement handler", fields: [handlerId], references: [id])
+  handleTime DateTime?
+  commemt    String?             @db.Text
+  blobs      Blob[]
+  handlerId  Int?
+  userId     Int
+  activityId Int
 }
 
 model UserGroup {
@@ -130,14 +129,16 @@ model Agenda {
 }
 
 enum ReimbursementStatus {
-  PENDDING
+  PENDING
   REJECTED
   APPROVED
 }
 
 model Blob {
-  id         Int        @id @default(autoincrement())
-  data       Bytes
-  Attachment Attachment?
-  Activity   Activity[]
+  id              Int            @id @default(autoincrement())
+  data            Bytes
+  Attachment      Attachment?
+  Activity        Activity[]
+  Reimbursement   Reimbursement? @relation(fields: [reimbursementId], references: [id])
+  reimbursementId Int?
 }

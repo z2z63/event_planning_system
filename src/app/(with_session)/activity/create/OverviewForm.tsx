@@ -11,7 +11,7 @@ import { PlusOutlined } from "@ant-design/icons";
 import Image from "next/image";
 import React, { useRef, useState } from "react";
 import { Dayjs } from "dayjs";
-import { UploadFile } from "antd/es/upload/interface";
+import { deleteBlobById } from "@/app/lib/data";
 
 export type OverviewFormDataType = {
   activityName: string;
@@ -35,7 +35,6 @@ export function useOverviewForm(
 ) {
   const [fileId, setFileId] = useState(-1);
   const form = useRef<FormInstance | null>(null);
-  const [fileList, setFileList] = useState<UploadFile[]>([]);
 
   function triggerFormSubmit() {
     if (form.current === null) {
@@ -77,14 +76,15 @@ export function useOverviewForm(
         <Upload
           accept="image/png, image/gif, image/jpeg"
           action="/api/blob/upload"
-          fileList={fileList}
           maxCount={1}
           itemRender={() => <></>}
-          onChange={({ file, fileList }) => {
+          onChange={async ({ file, fileList }) => {
             if (file.status === "done") {
               setFileId(file.response.id);
+            } else if (file.status === "removed") {
+              await deleteBlobById(file.response.id);
+              setFileId(-1);
             }
-            setFileList(fileList);
           }}
         >
           {fileId === -1 ? (

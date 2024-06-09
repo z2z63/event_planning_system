@@ -6,10 +6,10 @@ import { Button } from "antd";
 import "remixicon/fonts/remixicon.css";
 import { Level } from "@tiptap/extension-heading";
 
-export default function useRichTextEditor() {
+export default function useRichTextEditor(defaultValue: string) {
   const editor = useEditor({
     extensions: [StarterKit],
-    content: "<h4>请输入活动内容，支持富文本，支持markdown</h4>",
+    content: defaultValue,
   });
   const levels: Level[] = [1, 2, 3, 4, 5];
 
@@ -21,8 +21,7 @@ export default function useRichTextEditor() {
   }
 
   const RichTextEditor = (
-    <div className="my-[20px] w-[600px]">
-      <span className="text-[18px] mb-[20px]">活动内容</span>
+    <div className="flex flex-col">
       <div className="flex justify-around w-[500px] my-[10px] [&_i]:font-bold">
         <Button
           icon={<i className="ri-bold"></i>}
@@ -68,7 +67,12 @@ export default function useRichTextEditor() {
           onClick={() => editor?.chain().focus().toggleBlockquote().run()}
         />
       </div>
-      <EditorContent editor={editor} className="prose" />
+      <EditorContent
+        editor={editor}
+        className="prose [&>.tiptap.ProseMirror]:border
+      [&>.tiptap.ProseMirror]:min-h-[300px] [&>.tiptap.ProseMirror]:w-[600px] [&>.tiptap.ProseMirror]:p-[1px]
+       [&>.tiptap.ProseMirror]:border-dashed [&>.tiptap.ProseMirror]:border-gray-500"
+      />
     </div>
   );
   return { RichTextEditor, getEditorData };

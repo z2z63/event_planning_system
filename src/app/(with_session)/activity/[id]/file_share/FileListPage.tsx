@@ -6,7 +6,7 @@ import { CheckboxOptionType } from "antd/es/checkbox/Group";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import dayjs from "dayjs";
-import { UploadChangeParam, UploadFile } from "antd/es/upload/interface";
+import { UploadChangeParam } from "antd/es/upload/interface";
 import {
   getAttachmentList,
   uploadAttachment,
@@ -38,7 +38,7 @@ export function FileListPage({
     setSelectedGroups(value);
   }
 
-  async function postUpload(info: UploadChangeParam<UploadFile>) {
+  async function onUploadChange(info: UploadChangeParam) {
     if (info.file.status === "done") {
       const fileId = info.file.response.id;
       // bit map visibility
@@ -68,13 +68,15 @@ export function FileListPage({
       </div>
 
       <div className="mb-[40px] h-[200px] flex justify-center">
-        <Upload action="/api/blob/upload" multiple onChange={postUpload}>
-          <div className="flex flex-col items-center w-[800px] h-[200px] border border-dashed border-gray-300">
+        <Upload action="/api/blob/upload" multiple onChange={onUploadChange}>
+          <div className="flex flex-col justify-around items-center w-[800px] h-[200px] border border-dashed border-gray-300 rounded-[10px] hover:border-blue-500">
             <InboxOutlined className="text-[96px] text-blue-500" />
-            <span className="text-[16px]">点击或拖拽文件到此处上传</span>
-            <span className="text-gray-500">
-              上传文件前请选择文件可见性，公开的文件将会被所有参与者看到
-            </span>
+            <div className="flex flex-col items-center">
+              <span className="text-[16px]">点击或拖拽文件到此处上传</span>
+              <span className="text-gray-500">
+                上传文件前请选择文件可见性，公开的文件将会被所有参与者看到
+              </span>
+            </div>
           </div>
         </Upload>
         <div className="flex flex-col mx-[100px]">

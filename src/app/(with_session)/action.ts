@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import {
   createActivity,
   createAttachment,
+  createReimbursement,
   disconnectUserUserGroup,
   getActivityById,
   getActivityByUserId,
@@ -150,4 +151,23 @@ export async function getAttachmentList(activityId: number) {
 
 function isVisible(visibility: bigint, groupSeq: number) {
   return (visibility & (BigInt(1) << BigInt(groupSeq))) !== BigInt(0);
+}
+
+export async function newReimbursement(
+  activityId: number,
+  title: string,
+  amount: string,
+  info: string,
+  blobIdList: number[],
+) {
+  const { username: _, id: userId } = await getJWT();
+  await getUserGroupInActivityByUserId(userId, activityId); // 检查用户是否在活动中
+  await createReimbursement(
+    userId,
+    activityId,
+    title,
+    new Decimal(amount),
+    info,
+    blobIdList,
+  );
 }

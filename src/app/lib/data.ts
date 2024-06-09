@@ -3,6 +3,7 @@ import prisma from "./db";
 import * as crypto from "node:crypto";
 import { md5 } from "js-md5";
 import { Activity, Agenda } from "@prisma/client";
+import Decimal from "decimal.js";
 
 export async function createUser({
   username,
@@ -262,6 +263,37 @@ export async function getUserGroupsByActivityId(activityId: number) {
   return prisma.userGroup.findMany({
     where: {
       activityId,
+    },
+  });
+}
+
+export async function deleteBlobById(blobId: number) {
+  await prisma.blob.delete({
+    where: {
+      id: blobId,
+    },
+  });
+}
+
+export async function createReimbursement(
+  userId: number,
+  activityId: number,
+  title: string,
+  amount: Decimal,
+  info: string,
+  blobIdList: number[],
+) {
+  return prisma.reimbursement.create({
+    data: {
+      title,
+      amount,
+      info,
+      blobs: {
+        connect: blobIdList.map((e) => ({ id: e })),
+      },
+      activityId,
+      status: "PENDING",
+      userId,
     },
   });
 }

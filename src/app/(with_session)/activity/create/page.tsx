@@ -23,7 +23,9 @@ export default function Page() {
 
   const { AgendaInput, getAgendaData } = useAgendaInput();
   const { UserGroupsInput, getUserGroupData } = useUserGroupsInput();
-  const { RichTextEditor, getEditorData } = useRichTextEditor();
+  const { RichTextEditor, getEditorData } = useRichTextEditor(
+    "<h4>请输入活动内容，支持富文本，支持markdown</h4>",
+  );
   const { OverviewForm, triggerFormSubmit } = useOverviewForm(onSubmit);
   return (
     <div className="flex flex-col justify-around items-center">
@@ -33,7 +35,10 @@ export default function Page() {
           <div>{UserGroupsInput}</div>
         </div>
         <div className="flex flex-col mr-[200px]">
-          {RichTextEditor}
+          <div className="my-[20px] w-[600px]">
+            <span className="text-[18px] mb-[20px]">活动内容</span>
+            {RichTextEditor}
+          </div>
           {AgendaInput}
         </div>
       </div>
