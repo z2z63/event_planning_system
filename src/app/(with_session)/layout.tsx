@@ -1,27 +1,20 @@
 import React from "react";
 import Image from "next/image";
 import dayjs from "dayjs";
-import * as jose from "jose";
-import { cookies } from "next/headers";
 import { PopUpAvatar } from "@/app/(with_session)/PopupAvatar";
 import Link from "next/link";
 import SessionProvider from "@/app/(with_session)/SessionProvider";
 import { HeadTitle } from "@/app/(with_session)/HeadTitle";
+import { getJWT } from "@/app/(with_session)/action";
 
 export default async function HeaderLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const jwt = cookies().get("jwt")?.value;
-  if (jwt === undefined) {
-    throw Error("not login");
-  }
-
-  const payload: jose.JWTPayload & { username: string; id: number } =
-    jose.decodeJwt(jwt);
+  const payload = await getJWT();
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col h-screen">
       <header className="w-full flex justify-between items-center border-b-[1px] border-black">
         <Link href="/" className="flex justify-around items-center px-[10px]">
           <Image

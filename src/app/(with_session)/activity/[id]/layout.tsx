@@ -79,15 +79,13 @@ const items: Required<MenuProps>["items"][number][] = [
 
 export default function Layout({
   children,
-  params,
 }: {
   children: React.ReactNode;
-  params: { id: string };
 }) {
   return (
-    <div className="flex">
-      <Menu className="w-[250px]" items={items} />
-      <div className="flex flex-col grow">
+    <div className="flex h-full">
+      <Menu className="w-[200px] shrink-0" items={items} />
+      <div className="flex flex-col h-full">
         <MyBreadCrumb />
         {children}
       </div>

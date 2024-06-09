@@ -79,7 +79,7 @@ export function BasicInfo({
       children: (
         <div className="flex items-center w-[100px]">
           <div
-            className="h-[20px] w-[20px] rounded-full"
+            className="size-[10px] rounded-full"
             style={{ backgroundColor: color }}
           />
           <span className="ml-[10px]">{statusTable[status]}</span>

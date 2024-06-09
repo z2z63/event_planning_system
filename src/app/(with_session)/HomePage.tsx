@@ -90,7 +90,8 @@ function Card(data: CardData) {
   return (
     <Link
       href={`/activity/${data.id}`}
-      className="bg-white w-[300px] h-[300px] rounded-[5px] m-[20px] flex flex-col hover:relative hover:bottom-[5px]"
+      className="bg-white w-[300px] h-[300px] rounded-[5px] m-[20px] flex flex-col transition-[bottom_scale] duration-200
+       hover:relative bottom-[0] hover:bottom-[5px] hover:scale-105"
       style={{ boxShadow: "0px 4px 10px 0px rgba(0, 0, 0, 0.3)" }}
       key={data.id}
     >
@@ -108,7 +109,7 @@ function Card(data: CardData) {
           <span className="text-[#989797]">{organizers}</span>
           <div className="flex items-center">
             <div
-              className="h-[20px] w-[20px] rounded-full"
+              className="size-[10px] rounded-full"
               style={{ backgroundColor: color }}
             />
             <span className="ml-[10px]">{status}</span>

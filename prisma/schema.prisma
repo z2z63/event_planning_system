@@ -28,7 +28,7 @@ model User {
 model Activity {
   id                  Int                   @id @default(autoincrement())
   name                String                @db.VarChar(128)
-  info  String @db.Text
+  info        String      @db.Text
   startTime           DateTime
   endTime             DateTime
   budget              Decimal               @db.Money
@@ -39,8 +39,9 @@ model Activity {
   Notification        Notification[]
   NotificationComfirm NotificationComfirm[]
   Agenda              Agenda[]
-  cover Blob   @relation(fields: [blobId], references: [id])
-  blobId Int
+  cover       Blob        @relation(fields: [blobId], references: [id])
+  blobId      Int
+  Attachments Attachment[]
 }
 
 model Resource {
@@ -61,10 +62,13 @@ model Attachment {
   filename        String         @db.VarChar(128)
   visibility      BigInt
   size            Int
-  blob   Blob @relation(fields: [blobId], references: [id])
+  blob       Blob      @relation(fields: [blobId], references: [id])
+  time       DateTime  @default(now())
   Reimbursement   Reimbursement? @relation(fields: [reimbursementId], references: [id])
   reimbursementId Int?
-  blobId Int
+  blobId     Int       @unique
+  Activity   Activity? @relation(fields: [activityId], references: [id])
+  activityId Int?
 }
 
 model ResourceGroup {
@@ -132,8 +136,8 @@ enum ReimbursementStatus {
 }
 
 model Blob {
-  id         Int          @id @default(autoincrement())
+  id         Int        @id @default(autoincrement())
   data       Bytes
-  Attachment Attachment[]
+  Attachment Attachment?
   Activity   Activity[]
 }

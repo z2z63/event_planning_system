@@ -4,10 +4,12 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import {
   createActivity,
+  createAttachment,
   disconnectUserUserGroup,
   getActivityById,
   getActivityByUserId,
   getActivityNameById,
+  getUserGroupIdInActivityByUserId,
   getUsersByPrefix,
   username2Id,
 } from "@/app/lib/data";
@@ -17,6 +19,7 @@ import { TimelineType } from "@/app/(with_session)/activity/create/TimelineSlice
 import { Activity, Agenda } from "@prisma/client";
 import Decimal from "decimal.js";
 import { CardData } from "@/app/(with_session)/HomePage";
+import * as jose from "jose";
 
 export async function signOut() {
   cookies().delete("jwt");
@@ -113,4 +116,26 @@ export async function getActivityBasicInfo(id: number) {
 export async function deleteUserInUserGroup(userId: number, groupId: number) {
   const record = await disconnectUserUserGroup(userId, groupId);
   console.log(record);
+}
+
+export async function uploadAttachment(
+  blobId: number,
+  visibility: number,
+  activityId: number,
+  filename: string,
+  fileSize: number,
+) {
+  const payload = await getJWT();
+  // check if the user is in the activity
+  await getUserGroupIdInActivityByUserId(payload.id, activityId);
+  await createAttachment(activityId, filename, visibility, blobId, fileSize);
+}
+
+export async function getJWT() {
+  const jwt = cookies().get("jwt")?.value;
+  if (jwt === undefined) {
+    throw Error("not login");
+  }
+
+  return jose.decodeJwt<{ username: string; id: number }>(jwt);
 }

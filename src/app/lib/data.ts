@@ -199,3 +199,72 @@ export async function disconnectUserUserGroup(userId: number, groupId: number) {
     },
   });
 }
+
+export async function getAttachmentListByActivityId(activityId: number) {
+  return prisma.attachment.findMany({
+    where: {
+      activityId: activityId,
+    },
+  });
+}
+
+export async function createAttachment(
+  activityId: number,
+  filename: string,
+  visibility: number,
+  blobId: number,
+  fileSize: number,
+) {
+  return prisma.activity.update({
+    data: {
+      Attachments: {
+        create: {
+          filename,
+          blob: {
+            connect: {
+              id: blobId,
+            },
+          },
+          visibility,
+          size: fileSize,
+        },
+      },
+    },
+    where: {
+      id: activityId,
+    },
+  });
+}
+
+export async function getUserGroupIdInActivityByUserId(
+  userId: number,
+  activityId: number,
+) {
+  const data = await prisma.userGroup.findMany({
+    select: {
+      id: true,
+    },
+    where: {
+      participants: {
+        some: {
+          id: userId,
+        },
+      },
+      activityId,
+    },
+  });
+  if (data.length > 1) {
+    throw new Error("User in multiple groups");
+  } else if (data.length == 0) {
+    throw new Error("User not in any group");
+  }
+  return data[0].id;
+}
+
+export async function getUserGroupsByActivityId(activityId: number) {
+  return prisma.userGroup.findMany({
+    where: {
+      activityId,
+    },
+  });
+}
