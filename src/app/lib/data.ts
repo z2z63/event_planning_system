@@ -297,3 +297,23 @@ export async function createReimbursement(
     },
   });
 }
+
+export async function getReimbursementListByActivityIdAndUserId(
+  activityId: number,
+  userId: number,
+) {
+  return prisma.reimbursement.findMany({
+    where: {
+      activityId,
+      userId,
+    },
+    include: {
+      handler: {
+        select: {
+          username: true,
+          id: true,
+        },
+      },
+    },
+  });
+}

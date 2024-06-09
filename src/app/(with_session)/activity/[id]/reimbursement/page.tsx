@@ -1,9 +1,8 @@
-import { Button } from "antd";
+import { getReimbursementList } from "@/app/(with_session)/action";
+import ReimbursementList from "@/app/(with_session)/activity/[id]/reimbursement/ReimbursementList";
 
-export default function Page({ params }: { params: { id: string } }) {
-  return (
-    <Button href={`/activity/${params.id}/reimbursement/create`}>
-      申请报销
-    </Button>
-  );
+export default async function Page({ params }: { params: { id: string } }) {
+  const activityId = Number(params.id);
+  const data = await getReimbursementList(activityId);
+  return <ReimbursementList activityId={activityId} data={data} />;
 }

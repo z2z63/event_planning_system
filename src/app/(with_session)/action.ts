@@ -11,6 +11,7 @@ import {
   getActivityByUserId,
   getActivityNameById,
   getAttachmentListByActivityId,
+  getReimbursementListByActivityIdAndUserId,
   getUserGroupInActivityByUserId,
   getUsersByPrefix,
   username2Id,
@@ -170,4 +171,10 @@ export async function newReimbursement(
     info,
     blobIdList,
   );
+}
+
+export async function getReimbursementList(activityId: number) {
+  const { username: _, id: userId } = await getJWT();
+  await getUserGroupInActivityByUserId(userId, activityId); // 检查用户是否在活动中
+  return getReimbursementListByActivityIdAndUserId(activityId, userId);
 }
