@@ -9,7 +9,8 @@ import {
   getActivityById,
   getActivityByUserId,
   getActivityNameById,
-  getUserGroupIdInActivityByUserId,
+  getAttachmentListByActivityId,
+  getUserGroupInActivityByUserId,
   getUsersByPrefix,
   username2Id,
 } from "@/app/lib/data";
@@ -125,9 +126,9 @@ export async function uploadAttachment(
   filename: string,
   fileSize: number,
 ) {
-  const payload = await getJWT();
+  const { username: _, id: userId } = await getJWT();
   // check if the user is in the activity
-  await getUserGroupIdInActivityByUserId(payload.id, activityId);
+  const group = await getUserGroupInActivityByUserId(userId, activityId);
   await createAttachment(activityId, filename, visibility, blobId, fileSize);
 }
 
@@ -138,4 +139,15 @@ export async function getJWT() {
   }
 
   return jose.decodeJwt<{ username: string; id: number }>(jwt);
+}
+
+export async function getAttachmentList(activityId: number) {
+  const { username: _, id: userId } = await getJWT();
+  const group = await getUserGroupInActivityByUserId(userId, activityId);
+  const allFiles = await getAttachmentListByActivityId(activityId);
+  return allFiles.filter((e) => isVisible(e.visibility, group.seq));
+}
+
+function isVisible(visibility: bigint, groupSeq: number) {
+  return (visibility & (BigInt(1) << BigInt(groupSeq))) !== BigInt(0);
 }

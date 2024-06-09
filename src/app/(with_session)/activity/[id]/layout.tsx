@@ -85,7 +85,7 @@ export default function Layout({
   return (
     <div className="flex h-full">
       <Menu className="w-[200px] shrink-0" items={items} />
-      <div className="flex flex-col h-full">
+      <div className="flex flex-col h-full grow">
         <MyBreadCrumb />
         {children}
       </div>

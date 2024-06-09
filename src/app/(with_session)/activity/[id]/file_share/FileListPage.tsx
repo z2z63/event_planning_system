@@ -7,9 +7,11 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import dayjs from "dayjs";
 import { UploadChangeParam, UploadFile } from "antd/es/upload/interface";
-import { uploadAttachment } from "@/app/(with_session)/action";
+import {
+  getAttachmentList,
+  uploadAttachment,
+} from "@/app/(with_session)/action";
 import "remixicon/fonts/remixicon.css";
-import { getAttachmentListByActivityId } from "@/app/lib/data";
 
 export function FileListPage({
   files,
@@ -24,12 +26,12 @@ export function FileListPage({
   const [refresh, setRefresh] = useState(0);
   const [newFiles, setNewFiles] = useState(files);
   useEffect(() => {
-    getAttachmentListByActivityId(activityId).then(setNewFiles);
+    getAttachmentList(activityId).then(setNewFiles);
   }, [activityId, refresh]);
 
   const options: CheckboxOptionType<number>[] = userGroups.map((e) => ({
     label: e.name,
-    value: e.id,
+    value: e.seq,
   }));
 
   function groupSelectChange(value: number[]) {
@@ -57,11 +59,14 @@ export function FileListPage({
 
   return (
     <div className="flex flex-col justify-between h-full">
-      <div className="flex flex-wrap justify-around items-center h-[600px] overflow-y-auto">
-        {newFiles.map((e) => (
-          <FileTile attachment={e} key={e.id} />
-        ))}
+      <div className="h-[600px]">
+        <div className="flex flex-wrap justify-around  overflow-y-auto">
+          {newFiles.map((e) => (
+            <FileTile attachment={e} key={e.id} />
+          ))}
+        </div>
       </div>
+
       <div className="mb-[40px] h-[200px] flex justify-center">
         <Upload action="/api/blob/upload" multiple onChange={postUpload}>
           <div className="flex flex-col items-center w-[800px] h-[200px] border border-dashed border-gray-300">

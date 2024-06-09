@@ -236,14 +236,11 @@ export async function createAttachment(
   });
 }
 
-export async function getUserGroupIdInActivityByUserId(
+export async function getUserGroupInActivityByUserId(
   userId: number,
   activityId: number,
 ) {
   const data = await prisma.userGroup.findMany({
-    select: {
-      id: true,
-    },
     where: {
       participants: {
         some: {
@@ -258,7 +255,7 @@ export async function getUserGroupIdInActivityByUserId(
   } else if (data.length == 0) {
     throw new Error("User not in any group");
   }
-  return data[0].id;
+  return data[0];
 }
 
 export async function getUserGroupsByActivityId(activityId: number) {
