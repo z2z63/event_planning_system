@@ -9,8 +9,6 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Login to Docker Hub
@@ -18,14 +16,8 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: generate sql from prisma schema
-        run: |
-          npm install prisma  &&
-          npx prisma migrate diff --from-empty --to-schema-datasource prisma/schema.prisma \
-          --script > prisma/generated.sql
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
-          context: .
           push: true
           tags: z2z63/event_planning_system:latest
