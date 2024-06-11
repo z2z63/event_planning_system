@@ -396,3 +396,88 @@ export async function getActivityIdByReimbursementId(reimbursementId: number) {
   });
   return record?.activityId;
 }
+
+export async function createSurvey(
+  activityId: number,
+  title: string,
+  visibility: bigint,
+  model: string,
+  creatorId: number,
+) {
+  return prisma.survey.create({
+    data: {
+      title,
+      model,
+      visibility,
+      creator: {
+        connect: {
+          id: creatorId,
+        },
+      },
+      activity: {
+        connect: {
+          id: activityId,
+        },
+      },
+    },
+  });
+}
+
+export async function getSurveyListByActivityId(activityId: number) {
+  return prisma.survey.findMany({
+    where: {
+      activityId,
+    },
+    select: {
+      creator: {
+        select: {
+          username: true,
+          id: true,
+        },
+      },
+      id: true,
+      title: true,
+      creatTime: true,
+      activityId: true,
+      visibility: true,
+    },
+  });
+}
+
+export async function getSurvey(surveyId: number) {
+  return prisma.survey.findUnique({
+    where: {
+      id: surveyId,
+    },
+  });
+}
+
+export async function createSurveyFillOut(
+  surveyId: number,
+  fillOut: string,
+  userId: number,
+) {
+  return prisma.surveyFillOut.create({
+    data: {
+      fillOut,
+      survey: {
+        connect: {
+          id: surveyId,
+        },
+      },
+      user: {
+        connect: {
+          id: userId,
+        },
+      },
+    },
+  });
+}
+
+export async function getSurveyFillOutBySurveyId(surveyId: number) {
+  return prisma.surveyFillOut.findMany({
+    where: {
+      surveyId,
+    },
+  });
+}

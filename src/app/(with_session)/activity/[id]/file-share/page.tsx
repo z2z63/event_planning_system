@@ -1,5 +1,5 @@
 import { getUserGroupsByActivityId } from "@/app/lib/data";
-import { FileListPage } from "@/app/(with_session)/activity/[id]/file_share/FileListPage";
+import { FileListPage } from "@/app/(with_session)/activity/[id]/file-share/FileListPage";
 import { getAttachmentList } from "@/app/(with_session)/action";
 
 export default async function Page({ params }: { params: { id: string } }) {

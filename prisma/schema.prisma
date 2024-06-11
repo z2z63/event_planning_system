@@ -23,12 +23,14 @@ model User {
   reimbursementsHanlded Reimbursement[] @relation("reimbursement handler")
   ParticipantGroup        UserGroup[]
   NotificationComfirm     NotificationComfirm[]
+  Survey                Survey[]
+  SurveyFillOut         SurveyFillOut[]
 }
 
 model Activity {
   id                  Int                   @id @default(autoincrement())
   name                String                @db.VarChar(128)
-  info        String      @db.Text
+  info        String       @db.Text
   startTime           DateTime
   endTime             DateTime
   budget              Decimal               @db.Money
@@ -39,9 +41,10 @@ model Activity {
   Notification        Notification[]
   NotificationComfirm NotificationComfirm[]
   Agenda              Agenda[]
-  cover       Blob        @relation(fields: [blobId], references: [id])
+  cover       Blob         @relation(fields: [blobId], references: [id])
   blobId      Int
   Attachments Attachment[]
+  Survey      Survey[]
 }
 
 model Resource {
@@ -142,4 +145,27 @@ model Blob {
   Activity        Activity[]
   Reimbursement   Reimbursement? @relation(fields: [reimbursementId], references: [id])
   reimbursementId Int?
+}
+
+model Survey {
+  id            Int             @id @default(autoincrement())
+  title         String          @db.VarChar(256)
+  model         String          @db.Text
+  visibility    BigInt
+  creator       User            @relation(fields: [creatorId], references: [id])
+  creatorId     Int
+  activity      Activity        @relation(fields: [activityId], references: [id])
+  activityId    Int
+  creatTime     DateTime        @default(now())
+  SurveyFillOut SurveyFillOut[]
+}
+
+model SurveyFillOut {
+  id       Int      @id @default(autoincrement())
+  survey   Survey   @relation(fields: [surveyId], references: [id])
+  surveyId Int
+  user     User     @relation(fields: [userId], references: [id])
+  userId   Int
+  fillOut  String   @db.Text
+  fillTime DateTime @default(now())
 }

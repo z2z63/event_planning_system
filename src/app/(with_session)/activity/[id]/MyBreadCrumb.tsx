@@ -50,9 +50,29 @@ export function MyBreadCrumb() {
         经费报销记录
       </Link>,
     ],
-    [`/activity/${activityId}/survey`]: [
+    [`/activity/${activityId}/survey/fill-out-list`]: [
       <Link href="." key="overview">
-        问卷调查
+        待填写问卷
+      </Link>,
+    ],
+    [`/activity/${activityId}/survey/\\d+/fill-out`]: [
+      <Link href="." key="overview">
+        问卷填写
+      </Link>,
+    ],
+    [`/activity/${activityId}/survey/create`]: [
+      <Link href="." key="overview">
+        创建问卷
+      </Link>,
+    ],
+    [`/activity/${activityId}/survey/statistics-list`]: [
+      <Link href="." key="overview">
+        问卷统计总览
+      </Link>,
+    ],
+    [`/activity/${activityId}/survey/\\d+/statistics`]: [
+      <Link href="." key="overview">
+        问卷统计
       </Link>,
     ],
   };

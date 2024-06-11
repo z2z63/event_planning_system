@@ -2,7 +2,7 @@ import React from "react";
 import { Menu } from "antd";
 import Link from "next/link";
 import Image from "next/image";
-import { MyBreadCrumb } from "@/app/(with_session)/activity/[id]/crumb";
+import { MyBreadCrumb } from "@/app/(with_session)/activity/[id]/MyBreadCrumb";
 import { ItemType } from "antd/es/menu/interface";
 
 export default function Layout({
@@ -20,6 +20,10 @@ export default function Layout({
       height={18}
     />
   );
+  const icon2 = (
+    <Image src="/survey.svg" alt="overview icon" width={18} height={18} />
+  );
+
   const activityId = Number(params.id);
   const items: ItemType[] = [
     {
@@ -116,9 +120,45 @@ export default function Layout({
           问卷反馈
         </Link>
       ),
-      icon: (
-        <Image src="/survey.svg" alt="overview icon" width={18} height={18} />
-      ),
+      type: "group",
+      children: [
+        {
+          label: (
+            <Link
+              href={`/activity/${activityId}/survey/create`}
+              className="text-[18px]"
+            >
+              创建问卷
+            </Link>
+          ),
+          icon: icon2,
+          key: "create survey",
+        },
+        {
+          label: (
+            <Link
+              href={`/activity/${activityId}/survey/fill-out-list`}
+              className="text-[18px]"
+            >
+              待填写问卷
+            </Link>
+          ),
+          icon: icon2,
+          key: "survey list",
+        },
+        {
+          label: (
+            <Link
+              href={`/activity/${activityId}/survey/statistics-list`}
+              className="text-[18px]"
+            >
+              问卷统计总览
+            </Link>
+          ),
+          icon: icon2,
+          key: "survey dashboard",
+        },
+      ],
     },
   ];
   return (

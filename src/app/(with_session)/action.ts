@@ -6,6 +6,8 @@ import {
   createActivity,
   createAttachment,
   createReimbursement,
+  createSurvey,
+  createSurveyFillOut,
   disconnectUserUserGroup,
   getActivityById,
   getActivityByUserId,
@@ -14,6 +16,9 @@ import {
   getAttachmentListByActivityId,
   getPendingReimbursementsByActivityId,
   getReimbursementListByActivityIdAndUserId,
+  getSurvey,
+  getSurveyFillOutBySurveyId,
+  getSurveyListByActivityId,
   getUserGroupInActivityByUserId,
   getUsersByPrefix,
   updateExpenditure,
@@ -279,4 +284,78 @@ export async function handleReimbursement(
   if (reimbursement.status === "APPROVED") {
     await updateExpenditure(activityId, reimbursement.amount);
   }
+}
+
+export async function newSurvey(
+  activityId: number,
+  visibility: bigint,
+  model: string,
+) {
+  const { username: _, id: creatorId } = await getJWT();
+  const groups = await getUserGroupInActivityByUserId([creatorId], activityId); // 检查用户是否在活动中
+  if (groups.length === 0) {
+    throw new Error("user not in activity");
+  }
+  if (groups[0].seq !== 0) {
+    throw new Error("only organizer can create survey");
+  }
+  const title = JSON.parse(model)?.title || "未命名问卷";
+  await createSurvey(activityId, title, visibility, model, creatorId);
+}
+
+export async function getSurveyList(activityId: number) {
+  const { username: _, id: userId } = await getJWT();
+  const groups = await getUserGroupInActivityByUserId([userId], activityId); // 检查用户是否在活动中
+  if (groups.length === 0) {
+    throw new Error("user not in activity");
+  }
+  return getSurveyListByActivityId(activityId);
+}
+
+export async function getSurveyModel(surveyId: number) {
+  const { username: _, id: userId } = await getJWT();
+  const survey = await getSurvey(surveyId);
+  if (survey === null) {
+    throw new Error("survey not found");
+  }
+  const groups = await getUserGroupInActivityByUserId(
+    [userId],
+    survey.activityId,
+  ); // 检查用户是否在活动中
+  if (groups.length === 0) {
+    throw new Error("user not in activity");
+  }
+  return survey;
+}
+
+export async function completeSurvey(surveyId: number, fillOut: string) {
+  const { username: _, id: userId } = await getJWT();
+  const survey = await getSurvey(surveyId);
+  if (survey === null) {
+    throw new Error("survey not found");
+  }
+  const groups = await getUserGroupInActivityByUserId(
+    [userId],
+    survey.activityId,
+  ); // 检查用户是否在活动中
+  if (groups.length === 0) {
+    throw new Error("user not in activity");
+  }
+  await createSurveyFillOut(surveyId, fillOut, userId);
+}
+
+export async function getSurveyResults(surveyId: number) {
+  const { username: _, id: userId } = await getJWT();
+  const survey = await getSurvey(surveyId);
+  if (survey === null) {
+    throw new Error("survey not found");
+  }
+  const groups = await getUserGroupInActivityByUserId(
+    [userId],
+    survey.activityId,
+  ); // 检查用户是否在活动中
+  if (groups.length === 0) {
+    throw new Error("user not in activity");
+  }
+  return getSurveyFillOutBySurveyId(surveyId);
 }
