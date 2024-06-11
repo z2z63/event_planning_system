@@ -1,3 +1,11 @@
+![wakatime](https://wakatime.com/badge/user/eb532fc7-fa02-42d4-9a30-60b555075854/project/183a8824-dd12-4c71-9cfc-011a62864de2.svg)
+![Next.js 14](https://img.shields.io/badge/Next.js-14-blue?logo=next.js)
+![GitHub top language](https://img.shields.io/github/languages/top/z2z63/event_planning_system?logo=typescript)
+![Website Deploy](https://deploy-badge.vercel.app/?url=https://event-planning-system.vercel.app/&name=vercel&logo=vercel)
+![workflow](https://github.com/z2z63/event_planning_system/actions/workflows/build-docker-image.yaml/badge.svg)
+![Docker Image Size](https://img.shields.io/docker/image-size/z2z63/event_planning_system?logo=docker)
+![Docker Pulls](https://img.shields.io/docker/pulls/z2z63/event_planning_system?logo=docker)
+
 # 在线演示
 
 已使用vercel部署本项目 [event-planning-system.vercel.app](https://event-planning-system.vercel.app/)  
