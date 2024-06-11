@@ -13,12 +13,13 @@ import {
 } from "@/app/(with_session)/action";
 import "remixicon/fonts/remixicon.css";
 
+type AttachmentWithName = Attachment & { blob: { filename: string } };
 export function FileListPage({
   files,
   userGroups,
   activityId,
 }: {
-  files: Attachment[];
+  files: AttachmentWithName[];
   userGroups: UserGroup[];
   activityId: number;
 }) {
@@ -102,19 +103,19 @@ export function FileListPage({
   );
 }
 
-function FileTile({ attachment }: { attachment: Attachment }) {
+function FileTile({ attachment }: { attachment: AttachmentWithName }) {
   return (
     <Link
-      href={`/api/blob/${attachment.blobId}?attachment=true&filename=${attachment.filename}`}
+      href={`/api/blob/${attachment.blobId}?attachment=true`}
       className="flex justify-between items-center w-[500px] h-[100px] transition-[scale] hover:scale-105
        mx-[10px] my-[10px] bg-gray-100 rounded-[10px] hover:shadow-[#0000004C] hover:shadow"
     >
       <div className="flex items-center">
         <div className="text-[36px] m-[20px]">
-          <FileIcon ext={attachment.filename.split(".").pop() || ""} />
+          <FileIcon ext={attachment.blob.filename.split(".").pop() || ""} />
         </div>
         <div className="flex flex-col">
-          <span>{attachment.filename}</span>
+          <span>{attachment.blob.filename}</span>
           <span className="text-[12px] text-gray-500">
             {dayjs(attachment.time).format("YYYY年MM月DD日HH时MM分")}
           </span>

@@ -61,20 +61,17 @@ export async function getUsersByPrefix(prefix: string) {
 }
 
 export async function getBlobById(id: number) {
-  const buffer = await prisma.blob.findUnique({
-    select: {
-      data: true,
-    },
+  return prisma.blob.findUnique({
     where: {
       id,
     },
   });
-  return buffer?.data;
 }
 
-export async function createBlob(data: Buffer) {
+export async function createBlob(data: Buffer, filename: string) {
   const { id } = await prisma.blob.create({
     data: {
+      filename,
       data,
     },
   });
@@ -204,7 +201,14 @@ export async function disconnectUserUserGroup(userId: number, groupId: number) {
 export async function getAttachmentListByActivityId(activityId: number) {
   return prisma.attachment.findMany({
     where: {
-      activityId: activityId,
+      activityId,
+    },
+    include: {
+      blob: {
+        select: {
+          filename: true,
+        },
+      },
     },
   });
 }
@@ -220,14 +224,13 @@ export async function createAttachment(
     data: {
       Attachments: {
         create: {
-          filename,
+          size: fileSize,
           blob: {
             connect: {
               id: blobId,
             },
           },
           visibility,
-          size: fileSize,
         },
       },
     },
@@ -238,25 +241,29 @@ export async function createAttachment(
 }
 
 export async function getUserGroupInActivityByUserId(
-  userId: number,
+  userIdList: number[],
   activityId: number,
 ) {
-  const data = await prisma.userGroup.findMany({
+  return prisma.userGroup.findMany({
     where: {
       participants: {
         some: {
-          id: userId,
+          id: {
+            in: userIdList,
+          },
         },
       },
       activityId,
     },
+    include: {
+      participants: {
+        select: {
+          id: true,
+          username: true,
+        },
+      },
+    },
   });
-  if (data.length > 1) {
-    throw new Error("User in multiple groups");
-  } else if (data.length == 0) {
-    throw new Error("User not in any group");
-  }
-  return data[0];
 }
 
 export async function getUserGroupsByActivityId(activityId: number) {
@@ -316,4 +323,76 @@ export async function getReimbursementListByActivityIdAndUserId(
       },
     },
   });
+}
+
+export async function getPendingReimbursementsByActivityId(activityId: number) {
+  return prisma.reimbursement.findMany({
+    where: {
+      activityId,
+      status: "PENDING",
+    },
+    include: {
+      blobs: {
+        select: {
+          filename: true,
+          id: true,
+        },
+      },
+      user: {
+        select: {
+          id: true,
+          username: true,
+        },
+      },
+    },
+  });
+}
+
+export async function updateReimbursementStatus(
+  reimbursementId: number,
+  handlerId: number,
+  comment: string,
+  status: "REJECTED" | "APPROVED",
+) {
+  const now = new Date(Date.now());
+  return prisma.reimbursement.update({
+    data: {
+      status,
+      handleTime: now,
+      comment: comment,
+      handler: {
+        connect: {
+          id: handlerId,
+        },
+      },
+    },
+    where: {
+      id: reimbursementId,
+    },
+  });
+}
+
+export async function updateExpenditure(activityId: number, amount: Decimal) {
+  return prisma.activity.update({
+    data: {
+      expenditure: {
+        increment: amount,
+      },
+    },
+    where: {
+      id: activityId,
+    },
+  });
+}
+
+export async function getActivityIdByReimbursementId(reimbursementId: number) {
+  const record = await prisma.reimbursement.findUnique({
+    where: {
+      id: reimbursementId,
+    },
+    select: {
+      activityId: true,
+    },
+  });
+  return record?.activityId;
 }

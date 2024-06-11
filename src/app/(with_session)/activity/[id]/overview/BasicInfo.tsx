@@ -6,6 +6,7 @@ import dayjs from "dayjs";
 import { useContext } from "react";
 import { SessionContext } from "@/app/(with_session)/SessionProvider";
 import { ActivityData } from "@/app/(with_session)/activity/[id]/overview/page";
+import Decimal from "decimal.js";
 
 export function BasicInfo({
   data,
@@ -62,6 +63,17 @@ export function BasicInfo({
     {
       label: "开销",
       children: data.expenditure + " ￥",
+      key: "endTime",
+    },
+    {
+      label: "经济状况",
+      children:
+        (new Decimal(data.budget) > new Decimal(data.expenditure)
+          ? "超支"
+          : "剩余") +
+        " " +
+        new Decimal(data.budget).minus(data.expenditure).abs().toString() +
+        " ￥",
       key: "endTime",
     },
     {

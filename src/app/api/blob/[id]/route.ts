@@ -6,20 +6,19 @@ export async function GET(
   { params }: { params: { id: string } },
 ) {
   const searchParams = request.nextUrl.searchParams;
-  const data = await getBlobById(Number(params.id));
-  if (data === undefined) {
+  const blob = await getBlobById(Number(params.id));
+  if (blob?.data === undefined) {
     return NextResponse.json({ error: "Not Found" }, { status: 404 });
   }
   if (
     searchParams.get("attachment") === "true" &&
     searchParams.has("filename")
   ) {
-    const filename = searchParams.get("filename")!;
-    return new NextResponse(data, {
+    return new NextResponse(blob.data, {
       headers: {
-        "Content-Disposition": `attachment; filename="${encodeURIComponent(filename)}"`,
+        "Content-Disposition": `attachment; filename="${encodeURIComponent(blob.filename)}"`,
       },
     });
   }
-  return new Response(data);
+  return new Response(blob.data);
 }

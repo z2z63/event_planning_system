@@ -4,6 +4,6 @@ export async function POST(request: Request) {
   const formData = await request.formData();
   const file = formData.get("file") as File;
   const data = Buffer.from(new Uint8Array(await file.arrayBuffer()));
-  const id = await createBlob(data);
+  const id = await createBlob(data, file.name);
   return Response.json({ id });
 }

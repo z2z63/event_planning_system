@@ -9,11 +9,15 @@ import {
   disconnectUserUserGroup,
   getActivityById,
   getActivityByUserId,
+  getActivityIdByReimbursementId,
   getActivityNameById,
   getAttachmentListByActivityId,
+  getPendingReimbursementsByActivityId,
   getReimbursementListByActivityIdAndUserId,
   getUserGroupInActivityByUserId,
   getUsersByPrefix,
+  updateExpenditure,
+  updateReimbursementStatus,
   username2Id,
 } from "@/app/lib/data";
 import { OverviewFormDataType } from "@/app/(with_session)/activity/create/OverviewForm";
@@ -130,7 +134,10 @@ export async function uploadAttachment(
 ) {
   const { username: _, id: userId } = await getJWT();
   // check if the user is in the activity
-  const group = await getUserGroupInActivityByUserId(userId, activityId);
+  const groups = await getUserGroupInActivityByUserId([userId], activityId);
+  if (groups.length === 0) {
+    throw new Error("user not in activity");
+  }
   await createAttachment(activityId, filename, visibility, blobId, fileSize);
 }
 
@@ -145,9 +152,12 @@ export async function getJWT() {
 
 export async function getAttachmentList(activityId: number) {
   const { username: _, id: userId } = await getJWT();
-  const group = await getUserGroupInActivityByUserId(userId, activityId);
+  const groups = await getUserGroupInActivityByUserId([userId], activityId);
+  if (groups.length === 0) {
+    throw new Error("user not in activity");
+  }
   const allFiles = await getAttachmentListByActivityId(activityId);
-  return allFiles.filter((e) => isVisible(e.visibility, group.seq));
+  return allFiles.filter((e) => isVisible(e.visibility, groups[0].seq));
 }
 
 function isVisible(visibility: bigint, groupSeq: number) {
@@ -162,7 +172,10 @@ export async function newReimbursement(
   blobIdList: number[],
 ) {
   const { username: _, id: userId } = await getJWT();
-  await getUserGroupInActivityByUserId(userId, activityId); // 检查用户是否在活动中
+  const groups = await getUserGroupInActivityByUserId([userId], activityId); // 检查用户是否在活动中
+  if (groups.length === 0) {
+    throw new Error("user not in activity");
+  }
   await createReimbursement(
     userId,
     activityId,
@@ -175,6 +188,95 @@ export async function newReimbursement(
 
 export async function getReimbursementList(activityId: number) {
   const { username: _, id: userId } = await getJWT();
-  await getUserGroupInActivityByUserId(userId, activityId); // 检查用户是否在活动中
-  return getReimbursementListByActivityIdAndUserId(activityId, userId);
+  const groups = await getUserGroupInActivityByUserId([userId], activityId); // 检查用户是否在活动中
+  if (groups.length === 0) {
+    throw new Error("user not in activity");
+  }
+  return (
+    await getReimbursementListByActivityIdAndUserId(activityId, userId)
+  ).map((e) => ({
+    ...e,
+    amount: e.amount.toString(),
+  }));
+}
+
+export async function getPendingReimbursementList(activityId: number) {
+  const { username: _, id: userId } = await getJWT();
+  const handler1sGroups = await getUserGroupInActivityByUserId(
+    [userId],
+    activityId,
+  ); // 检查用户是否在活动中
+  if (handler1sGroups.length === 0) {
+    throw new Error("user not in activity");
+  }
+  if (handler1sGroups[0].seq !== 0) {
+    throw new Error("only organizer can handle reimbursement");
+  }
+  const records = await getPendingReimbursementsByActivityId(activityId);
+
+  const applicant1sGroupList: {
+    name: string;
+    id: number;
+    participants: {
+      id: number;
+      username: string;
+    }[];
+  }[] = await getUserGroupInActivityByUserId(
+    records.map((e) => e.userId),
+    activityId,
+  );
+
+  function getUser1sGroup(userId: number) {
+    const group = applicant1sGroupList.find((group) =>
+      group.participants.find((user) => user.id === userId),
+    );
+    if (group === undefined) {
+      throw new Error("user not in activity");
+    }
+    return group;
+  }
+
+  return records.map((e, i) => {
+    const group = getUser1sGroup(e.userId);
+    return {
+      ...e,
+      amount: e.amount.toString(),
+      user: {
+        id: e.user.id,
+        username: e.user.username,
+        group: {
+          id: group.id,
+          name: group.name,
+        },
+      },
+    };
+  });
+}
+
+export async function handleReimbursement(
+  reimbursementId: number,
+  comment: string,
+  status: "REJECTED" | "APPROVED",
+) {
+  const { username: _, id: handlerId } = await getJWT();
+  const activityId = await getActivityIdByReimbursementId(reimbursementId);
+  if (activityId === undefined) {
+    throw new Error("activity not found");
+  }
+  const handler1sGroups = await getUserGroupInActivityByUserId(
+    [handlerId],
+    activityId,
+  ); // 检查用户是否在活动中
+  if (handler1sGroups[0].seq !== 0) {
+    throw new Error("only organizer can handle reimbursement");
+  }
+  const reimbursement = await updateReimbursementStatus(
+    reimbursementId,
+    handlerId,
+    comment,
+    status,
+  );
+  if (reimbursement.status === "APPROVED") {
+    await updateExpenditure(activityId, reimbursement.amount);
+  }
 }

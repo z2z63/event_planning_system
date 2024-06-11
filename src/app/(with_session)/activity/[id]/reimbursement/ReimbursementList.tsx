@@ -3,8 +3,9 @@ import { Descriptions, List } from "antd";
 import { Reimbursement, ReimbursementStatus } from "@prisma/client";
 import { DescriptionsItemType } from "antd/es/descriptions";
 
-type ReimbursementWithHandler = Reimbursement & {
+type ReimbursementModified = Omit<Reimbursement, "amount"> & {
   handler: { username: string; id: number } | null;
+  amount: string;
 };
 
 export default function ReimbursementList({
@@ -12,7 +13,7 @@ export default function ReimbursementList({
   data,
 }: {
   activityId: number;
-  data: ReimbursementWithHandler[];
+  data: ReimbursementModified[];
 }) {
   return (
     <List
@@ -23,7 +24,7 @@ export default function ReimbursementList({
   );
 }
 
-function SingleReimbursement(data: ReimbursementWithHandler) {
+function SingleReimbursement(data: ReimbursementModified) {
   let items: DescriptionsItemType[] = [
     {
       label: "报销名称",
@@ -60,7 +61,7 @@ function SingleReimbursement(data: ReimbursementWithHandler) {
       children: (
         <div
           className="prose-sm"
-          dangerouslySetInnerHTML={{ __html: data.commemt! }}
+          dangerouslySetInnerHTML={{ __html: data.comment! }}
         />
       ),
       span: 2,

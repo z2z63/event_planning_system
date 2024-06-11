@@ -1,9 +1,11 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { createUser } from "@/app/lib/data";
 
 export async function GET(request: NextRequest) {
+  console.log(request);
   if (request.nextUrl.searchParams.has("createUsers")) {
     await createUsers();
+    return new NextResponse("ok");
   }
 }
 
