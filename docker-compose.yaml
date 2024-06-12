@@ -8,6 +8,8 @@ services:
       DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/event_planning_system?schema=public
       NEXT_PUBLIC_RECAPTCHA_SITE_KEY: ${NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
       RECAPTCHA_SECRET_KEY: ${RECAPTCHA_SECRET_KEY}
+    volumes:
+      - initdb:/docker-entrypoint-initdb.d/
   postgres:
     image: postgres:16
     environment:
@@ -15,6 +17,7 @@ services:
       POSTGRES_DB: event_planning_system
     volumes:
       - postgres-data:/var/lib/postgresql/data
-      - ./prisma/generated.sql:/docker-entrypoint-initdb.d/init.sql
+      - initdb:/docker-entrypoint-initdb.d/
 volumes:
   postgres-data:
+  initdb:

@@ -32,6 +32,9 @@ RUN \
   elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm run build; \
   else echo "Lockfile not found." && exit 1; \
   fi
+RUN mkdir /docker-entrypoint-initdb.d &&  \
+    npx prisma migrate diff --from-empty --to-schema-datamodel prisma/schema.prisma --script >  \
+    /docker-entrypoint-initdb.d/generated.sql
 
 # Production image, copy all the files and run next
 FROM base AS runner
@@ -56,6 +59,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/prisma/schema.prisma ./prisma/schema.prisma
+COPY --from=builder --chown=nextjs:nodejs /docker-entrypoint-initdb.d/generated.sql /docker-entrypoint-initdb.d/generated.sql
 
 USER nextjs
 EXPOSE 3000
