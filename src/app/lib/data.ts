@@ -180,10 +180,15 @@ export async function getActivityNameById(activityId: number) {
   });
 }
 
-export async function disconnectUserUserGroup(userId: number, groupId: number) {
+export async function disconnectUserUserGroup(
+  userId: number,
+  groupId: number,
+  activityId: number,
+) {
   return prisma.userGroup.update({
     where: {
       id: groupId,
+      activityId,
     },
     data: {
       participants: {

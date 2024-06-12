@@ -60,7 +60,7 @@ export function UserGroupTable({
   ) {
     function handleDelete(userId: number) {
       return async () => {
-        await deleteUserInUserGroup(userId, record.id);
+        await deleteUserInUserGroup(userId, record.id, data.id);
         setGroups(
           groups.map((e) => {
             if (e.id === record.id) {

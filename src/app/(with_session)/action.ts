@@ -126,9 +126,15 @@ export async function getActivityBasicInfo(id: number) {
   return data;
 }
 
-export async function deleteUserInUserGroup(userId: number, groupId: number) {
-  const record = await disconnectUserUserGroup(userId, groupId);
-  console.log(record);
+export async function deleteUserInUserGroup(
+  userId: number,
+  groupId: number,
+  activityId: number,
+) {
+  if (!(await isOrganizer(activityId))) {
+    throw new Error("only organizer can view survey results");
+  }
+  await disconnectUserUserGroup(userId, groupId, activityId);
 }
 
 export async function uploadAttachment(
@@ -138,11 +144,8 @@ export async function uploadAttachment(
   filename: string,
   fileSize: number,
 ) {
-  const { id: userId } = await getJWT();
-  // check if the user is in the activity
-  const groups = await getUserGroupInActivityByUserId([userId], activityId);
-  if (groups.length === 0) {
-    throw new Error("user not in activity");
+  if (!(await isOrganizer(activityId))) {
+    throw new Error("only organizer can upload file");
   }
   await createAttachment(activityId, filename, visibility, blobId, fileSize);
 }
@@ -178,8 +181,7 @@ export async function newReimbursement(
   blobIdList: number[],
 ) {
   const { id: userId } = await getJWT();
-  const groups = await getUserGroupInActivityByUserId([userId], activityId); // 检查用户是否在活动中
-  if (groups.length === 0) {
+  if (!(await isInActivity(activityId))) {
     throw new Error("user not in activity");
   }
   await createReimbursement(
@@ -194,8 +196,7 @@ export async function newReimbursement(
 
 export async function getReimbursementList(activityId: number) {
   const { id: userId } = await getJWT();
-  const groups = await getUserGroupInActivityByUserId([userId], activityId); // 检查用户是否在活动中
-  if (groups.length === 0) {
+  if (!(await isInActivity(activityId))) {
     throw new Error("user not in activity");
   }
   return (
@@ -207,16 +208,8 @@ export async function getReimbursementList(activityId: number) {
 }
 
 export async function getPendingReimbursementList(activityId: number) {
-  const { id: userId } = await getJWT();
-  const handler1sGroups = await getUserGroupInActivityByUserId(
-    [userId],
-    activityId,
-  ); // 检查用户是否在活动中
-  if (handler1sGroups.length === 0) {
-    throw new Error("user not in activity");
-  }
-  if (handler1sGroups[0].seq !== 0) {
-    throw new Error("only organizer can handle reimbursement");
+  if (!(await isOrganizer(activityId))) {
+    throw new Error("only organizer can view pending reimbursements");
   }
   const records = await getPendingReimbursementsByActivityId(activityId);
 
@@ -269,11 +262,7 @@ export async function handleReimbursement(
   if (activityId === undefined) {
     throw new Error("activity not found");
   }
-  const handler1sGroups = await getUserGroupInActivityByUserId(
-    [handlerId],
-    activityId,
-  ); // 检查用户是否在活动中
-  if (handler1sGroups[0].seq !== 0) {
+  if (!(await isOrganizer(activityId))) {
     throw new Error("only organizer can handle reimbursement");
   }
   const reimbursement = await updateReimbursementStatus(
@@ -293,30 +282,23 @@ export async function newSurvey(
   model: string,
 ) {
   const { id: creatorId } = await getJWT();
-  const groups = await getUserGroupInActivityByUserId([creatorId], activityId); // 检查用户是否在活动中
-  if (groups.length === 0) {
-    throw new Error("user not in activity");
-  }
-  if (groups[0].seq !== 0) {
-    throw new Error("only organizer can create survey");
+  if (!(await isOrganizer(activityId))) {
+    throw new Error("only organizer can create new survey");
   }
   const title = JSON.parse(model)?.title || "未命名问卷";
   await createSurvey(activityId, title, BigInt(visibility), model, creatorId);
 }
 
 export async function getSurveyList(activityId: number) {
-  const { id: userId } = await getJWT();
-  const groups = await getUserGroupInActivityByUserId([userId], activityId); // 检查用户是否在活动中
-  if (groups.length === 0) {
-    throw new Error("user not in activity");
+  if (!(await isOrganizer(activityId))) {
+    throw new Error("only organizer can view all survey list");
   }
   return getSurveyListByActivityId(activityId);
 }
 
 export async function getUnFilledSurveyList(activityId: number) {
   const { id: userId } = await getJWT();
-  const groups = await getUserGroupInActivityByUserId([userId], activityId); // 检查用户是否在活动中
-  if (groups.length === 0) {
+  if (!(await isInActivity(activityId))) {
     throw new Error("user not in activity");
   }
   return getSurveyListByActivityIdAndUserId(activityId, userId);
@@ -328,11 +310,7 @@ export async function getSurveyModel(surveyId: number) {
   if (survey === null) {
     throw new Error("survey not found");
   }
-  const groups = await getUserGroupInActivityByUserId(
-    [userId],
-    survey.activityId,
-  ); // 检查用户是否在活动中
-  if (groups.length === 0) {
+  if (!(await isInActivity(survey.activityId))) {
     throw new Error("user not in activity");
   }
   return survey;
@@ -344,31 +322,34 @@ export async function completeSurvey(surveyId: number, fillOut: string) {
   if (survey === null) {
     throw new Error("survey not found");
   }
-  const groups = await getUserGroupInActivityByUserId(
-    [userId],
-    survey.activityId,
-  ); // 检查用户是否在活动中
-  if (groups.length === 0) {
+  if (!(await isInActivity(survey.activityId))) {
     throw new Error("user not in activity");
   }
   await createSurveyFillOut(surveyId, fillOut, userId);
 }
 
 export async function getSurveyResults(surveyId: number) {
-  const { id: userId } = await getJWT();
   const survey = await getSurvey(surveyId);
   if (survey === null) {
     throw new Error("survey not found");
   }
-  const groups = await getUserGroupInActivityByUserId(
-    [userId],
-    survey.activityId,
-  ); // 检查用户是否在活动中
-  if (groups.length === 0) {
-    throw new Error("user not in activity");
-  }
-  if (groups[0].seq !== 0) {
+  if (!(await isOrganizer(survey.activityId))) {
     throw new Error("only organizer can view survey results");
   }
   return getSurveyFillOutBySurveyId(surveyId);
+}
+
+export async function isOrganizer(activityId: number) {
+  const { id: userId } = await getJWT();
+  const groups = await getUserGroupInActivityByUserId([userId], activityId); // 检查用户是否在活动中
+  if (groups.length === 0) {
+    throw new Error("user not in activity");
+  }
+  return groups[0].seq === 0;
+}
+
+export async function isInActivity(activityId: number) {
+  const { id: userId } = await getJWT();
+  const groups = await getUserGroupInActivityByUserId([userId], activityId); // 检查用户是否在活动中
+  return groups.length !== 0;
 }
