@@ -19,6 +19,7 @@ import {
   getSurvey,
   getSurveyFillOutBySurveyId,
   getSurveyListByActivityId,
+  getSurveyListByActivityIdAndUserId,
   getUserGroupInActivityByUserId,
   getUsersByPrefix,
   updateExpenditure,
@@ -288,7 +289,7 @@ export async function handleReimbursement(
 
 export async function newSurvey(
   activityId: number,
-  visibility: bigint,
+  visibility: string,
   model: string,
 ) {
   const { username: _, id: creatorId } = await getJWT();
@@ -300,7 +301,7 @@ export async function newSurvey(
     throw new Error("only organizer can create survey");
   }
   const title = JSON.parse(model)?.title || "未命名问卷";
-  await createSurvey(activityId, title, visibility, model, creatorId);
+  await createSurvey(activityId, title, BigInt(visibility), model, creatorId);
 }
 
 export async function getSurveyList(activityId: number) {
@@ -310,6 +311,15 @@ export async function getSurveyList(activityId: number) {
     throw new Error("user not in activity");
   }
   return getSurveyListByActivityId(activityId);
+}
+
+export async function getUnFilledSurveyList(activityId: number) {
+  const { username: _, id: userId } = await getJWT();
+  const groups = await getUserGroupInActivityByUserId([userId], activityId); // 检查用户是否在活动中
+  if (groups.length === 0) {
+    throw new Error("user not in activity");
+  }
+  return getSurveyListByActivityIdAndUserId(activityId, userId);
 }
 
 export async function getSurveyModel(surveyId: number) {
@@ -356,6 +366,9 @@ export async function getSurveyResults(surveyId: number) {
   ); // 检查用户是否在活动中
   if (groups.length === 0) {
     throw new Error("user not in activity");
+  }
+  if (groups[0].seq !== 0) {
+    throw new Error("only organizer can view survey results");
   }
   return getSurveyFillOutBySurveyId(surveyId);
 }

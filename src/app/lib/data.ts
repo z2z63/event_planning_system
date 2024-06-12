@@ -444,6 +444,35 @@ export async function getSurveyListByActivityId(activityId: number) {
   });
 }
 
+export async function getSurveyListByActivityIdAndUserId(
+  activityId: number,
+  userId: number,
+) {
+  return prisma.survey.findMany({
+    where: {
+      activityId,
+      SurveyFillOut: {
+        none: {
+          userId,
+        },
+      },
+    },
+    select: {
+      creator: {
+        select: {
+          username: true,
+          id: true,
+        },
+      },
+      id: true,
+      title: true,
+      creatTime: true,
+      activityId: true,
+      visibility: true,
+    },
+  });
+}
+
 export async function getSurvey(surveyId: number) {
   return prisma.survey.findUnique({
     where: {

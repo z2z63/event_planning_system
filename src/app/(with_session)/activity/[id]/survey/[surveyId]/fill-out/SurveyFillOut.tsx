@@ -15,8 +15,9 @@ export default function SurveyFillOut({ survey }: { survey: SurveyType }) {
     async (surveyModel_: Model) => {
       surveyModel_.setValue("userId", userId);
       await completeSurvey(survey.id, JSON.stringify(surveyModel_.data));
+      window.location.href = `/activity/${survey.activityId}/survey/fill-out-list`;
     },
-    [survey.id, userId],
+    [survey.activityId, survey.id, userId],
   );
   surveyModel.onComplete.add(onComplete);
   return <Survey model={surveyModel} />;

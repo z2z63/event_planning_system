@@ -27,7 +27,7 @@ export default function Page({ params }: { params: { id: string } }) {
   }, []);
 
   async function submit() {
-    await newSurvey(activityId, BigInt(-1), creator.text);
+    await newSurvey(activityId, "-1", creator.text);
     window.localStorage.removeItem("survey-json");
     window.location.href = `/activity/${activityId}/survey/statistics-list`;
   }
