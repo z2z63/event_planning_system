@@ -24,7 +24,7 @@ export function MyBreadCrumb() {
         在线聊天
       </Link>,
     ],
-    [`/activity/${activityId}/file_share`]: [
+    [`/activity/${activityId}/file-share`]: [
       <Link href="." key="overview">
         资料分享
       </Link>,

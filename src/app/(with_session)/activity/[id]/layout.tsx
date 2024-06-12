@@ -58,7 +58,7 @@ export default function Layout({
       key: "3",
       label: (
         <Link
-          href={`/activity/${activityId}/file_share`}
+          href={`/activity/${activityId}/file-share`}
           className="text-[18px]"
         >
           资料分享
@@ -66,7 +66,7 @@ export default function Layout({
       ),
       icon: (
         <Image
-          src="/file_share.svg"
+          src="/file-share.svg"
           alt="overview icon"
           width={18}
           height={18}
