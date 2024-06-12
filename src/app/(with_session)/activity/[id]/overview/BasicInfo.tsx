@@ -69,8 +69,8 @@ export function BasicInfo({
       label: "经济状况",
       children:
         (new Decimal(data.budget) > new Decimal(data.expenditure)
-          ? "超支"
-          : "剩余") +
+          ? "剩余"
+          : "超支") +
         " " +
         new Decimal(data.budget).minus(data.expenditure).abs().toString() +
         " ￥",
