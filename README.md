@@ -1,10 +1,10 @@
-![wakatime](https://wakatime.com/badge/user/eb532fc7-fa02-42d4-9a30-60b555075854/project/183a8824-dd12-4c71-9cfc-011a62864de2.svg)
-![Next.js 14](https://img.shields.io/badge/Next.js-14-blue?logo=next.js)
-![GitHub top language](https://img.shields.io/github/languages/top/z2z63/event_planning_system?logo=typescript)
-![Website Deploy](https://deploy-badge.vercel.app/?url=https://event-planning-system.vercel.app/&name=vercel&logo=vercel)
-![workflow](https://github.com/z2z63/event_planning_system/actions/workflows/build-docker-image.yaml/badge.svg)
-![Docker Image Size](https://img.shields.io/docker/image-size/z2z63/event_planning_system?logo=docker)
-![Docker Pulls](https://img.shields.io/docker/pulls/z2z63/event_planning_system?logo=docker)
+[![wakatime](https://wakatime.com/badge/user/eb532fc7-fa02-42d4-9a30-60b555075854/project/183a8824-dd12-4c71-9cfc-011a62864de2.svg)](https://wakatime.com/@eb532fc7-fa02-42d4-9a30-60b555075854)
+[![Next.js 14](https://img.shields.io/badge/Next.js-14-blue?logo=next.js)](https://nextjs.org/)
+[![GitHub top language](https://img.shields.io/github/languages/top/z2z63/event_planning_system?logo=typescript)](https://github.com/search?q=repo%3Az2z63%2Fevent_planning_system++language%3ATypeScript&type=code)
+[![Website Deploy](https://deploy-badge.vercel.app/?url=https://event-planning-system.vercel.app/&name=vercel&logo=vercel)](https://event-planning-system.vercel.app/)
+[![workflow](https://github.com/z2z63/event_planning_system/actions/workflows/build-docker-image.yaml/badge.svg)](https://github.com/z2z63/event_planning_system/actions/workflows/build-docker-image.yaml)
+[![Docker Image Size](https://img.shields.io/docker/image-size/z2z63/event_planning_system?logo=docker)](https://hub.docker.com/r/z2z63/event_planning_system)
+[![Docker Pulls](https://img.shields.io/docker/pulls/z2z63/event_planning_system?logo=docker)](https://hub.docker.com/r/z2z63/event_planning_system)
 
 # 在线演示
 
