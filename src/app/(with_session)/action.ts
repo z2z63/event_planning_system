@@ -23,6 +23,7 @@ import {
   getUserGroupInActivityByUserId,
   getUsersByPrefix,
   updateExpenditure,
+  updatePartialActivity,
   updateReimbursementStatus,
   username2Id,
 } from "@/app/lib/data";
@@ -352,4 +353,33 @@ export async function isInActivity(activityId: number) {
   const { id: userId } = await getJWT();
   const groups = await getUserGroupInActivityByUserId([userId], activityId); // 检查用户是否在活动中
   return groups.length !== 0;
+}
+
+export async function updateActivityBasicInfo(
+  {
+    name,
+    budget,
+    startTime,
+    endTime,
+    info,
+  }: {
+    name: string;
+    budget: string;
+    startTime: Date;
+    endTime: Date;
+    info: string;
+  },
+  activityId: number,
+) {
+  if (!(await isOrganizer(activityId))) {
+    throw new Error("only organizer can update activity info");
+  }
+  return updatePartialActivity(
+    activityId,
+    name,
+    new Decimal(budget),
+    startTime,
+    endTime,
+    info,
+  );
 }

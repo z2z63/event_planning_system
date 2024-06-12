@@ -1,21 +1,35 @@
 "use client";
 
-import { Descriptions } from "antd";
+import {
+  Button,
+  DatePicker,
+  Descriptions,
+  Form,
+  Input,
+  InputNumber,
+} from "antd";
 import { DescriptionsItemType } from "antd/es/descriptions";
-import dayjs from "dayjs";
-import { useContext } from "react";
+import dayjs, { Dayjs } from "dayjs";
+import { useContext, useState } from "react";
 import { SessionContext } from "@/app/(with_session)/SessionProvider";
 import { ActivityData } from "@/app/(with_session)/activity/[id]/overview/page";
 import Decimal from "decimal.js";
+import useRichTextEditor from "@/app/(with_session)/activity/create/RichTextEditor";
+import { updateActivityBasicInfo } from "@/app/(with_session)/action";
 
 export function BasicInfo({
   data,
   className,
+  canIOperate,
 }: {
   data: ActivityData;
   className?: string;
+  canIOperate: boolean;
 }) {
   const session = useContext(SessionContext);
+  const { RichTextEditor, getEditorData } = useRichTextEditor(data.info);
+  const [editable, setEditable] = useState(false);
+  const [form] = Form.useForm();
   let myGroup;
   for (const group of data.ParticipantGroup) {
     if (group.participants.some((e) => e.id === session.id)) {
@@ -48,18 +62,45 @@ export function BasicInfo({
     ended: "rgba(0, 0, 0, 0.1)",
   }[status];
   const items: DescriptionsItemType[] = [
-    { label: "名称", children: data.name, key: "name" },
     {
-      label: "开始时间",
-      children: dayjs(data.startTime).format("YYYY[年]M[月]D[日]"),
+      label: "名称",
+      children: editable ? (
+        <Form.Item name="name" initialValue={data.name}>
+          <Input />
+        </Form.Item>
+      ) : (
+        data.name
+      ),
+      key: "name",
+    },
+    {
+      label: "时间范围",
+      children: editable ? (
+        <Form.Item
+          name="dateTimeRange"
+          initialValue={[dayjs(data.startTime), dayjs(data.endTime)]}
+        >
+          <DatePicker.RangePicker showTime className="max-w-[350px]" />
+        </Form.Item>
+      ) : (
+        dayjs(data.startTime).format("YYYY年M月D日H时m分") +
+        " - " +
+        dayjs(data.endTime).format("YYYY年M月D日H时m分")
+      ),
       key: "startTime",
+      span: 2,
     },
     {
-      label: "结束时间",
-      children: dayjs(data.endTime).format("YYYY[年]M[月]D[日]"),
-      key: "endTime",
+      label: "预算",
+      children: editable ? (
+        <Form.Item name="budget" initialValue={data.budget}>
+          <InputNumber prefix="￥" />
+        </Form.Item>
+      ) : (
+        data.budget + " ￥"
+      ),
+      key: "budget",
     },
-    { label: "预算", children: data.budget + " ￥", key: "budget" },
     {
       label: "开销",
       children: data.expenditure + " ￥",
@@ -107,11 +148,12 @@ export function BasicInfo({
           0,
         ).toString() + " 人",
       key: "participantCount",
-      span: 2,
     },
     {
       label: "内容",
-      children: (
+      children: editable ? (
+        RichTextEditor
+      ) : (
         <div
           className="prose"
           dangerouslySetInnerHTML={{ __html: data.info }}
@@ -120,12 +162,46 @@ export function BasicInfo({
       key: "info",
     },
   ];
+
+  function onSwitch() {
+    if (editable) {
+      form.submit();
+    }
+    setEditable(!editable);
+  }
+
+  type OverViewFormInputType = {
+    budget: string;
+    dateTimeRange: [Dayjs, Dayjs];
+    name: string;
+  };
+
+  async function onFinish(formData: OverViewFormInputType) {
+    await updateActivityBasicInfo(
+      {
+        name: formData.name,
+        startTime: formData.dateTimeRange[0].toDate(),
+        endTime: formData.dateTimeRange[1].toDate(),
+        budget: formData.budget,
+        info: getEditorData(),
+      },
+      data.id,
+    );
+  }
+
   return (
     <div className={className}>
-      <div className="flex flex-col">
-        <span className="text-[24px] mx-[10px]">基本信息</span>
+      <Form className="flex flex-col" form={form} onFinish={onFinish}>
+        <div className="flex justify-between">
+          <span className="text-[24px] mx-[10px]">基本信息</span>
+          {canIOperate ? (
+            <Button onClick={onSwitch} type={editable ? "primary" : "default"}>
+              {editable ? "保存" : "编辑"}
+            </Button>
+          ) : null}
+        </div>
         <Descriptions items={items} bordered className="mt-[20px]" />
-      </div>
+      </Form>
     </div>
   );
 }

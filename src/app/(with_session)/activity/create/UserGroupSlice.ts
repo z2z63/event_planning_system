@@ -17,7 +17,7 @@ const initialState: UserGroupsState = {
   seq: 0,
   group: [
     {
-      groupName: "默认组",
+      groupName: "组织者组",
       id: 0,
       info: "请输入用户组说明",
       mentionProps: [],

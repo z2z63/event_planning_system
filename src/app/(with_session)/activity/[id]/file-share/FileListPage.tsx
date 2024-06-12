@@ -14,14 +14,17 @@ import {
 import "remixicon/fonts/remixicon.css";
 
 type AttachmentWithName = Attachment & { blob: { filename: string } };
+
 export function FileListPage({
   files,
   userGroups,
   activityId,
+  canIUpload,
 }: {
   files: AttachmentWithName[];
   userGroups: UserGroup[];
   activityId: number;
+  canIUpload: boolean;
 }) {
   const [selectedGroups, setSelectedGroups] = useState<number[]>([]);
   const [refresh, setRefresh] = useState(0);
@@ -68,37 +71,39 @@ export function FileListPage({
         </div>
       </div>
 
-      <div className="mb-[40px] h-[200px] flex justify-center">
-        <Upload action="/api/blob/upload" multiple onChange={onUploadChange}>
-          <div className="flex flex-col justify-around items-center w-[800px] h-[200px] border border-dashed border-gray-300 rounded-[10px] hover:border-blue-500">
-            <InboxOutlined className="text-[96px] text-blue-500" />
-            <div className="flex flex-col items-center">
-              <span className="text-[16px]">点击或拖拽文件到此处上传</span>
-              <span className="text-gray-500">
-                上传文件前请选择文件可见性，公开的文件将会被所有参与者看到
-              </span>
+      {canIUpload && (
+        <div className="mb-[40px] h-[200px] flex justify-center">
+          <Upload action="/api/blob/upload" multiple onChange={onUploadChange}>
+            <div className="flex flex-col justify-around items-center w-[800px] h-[200px] border border-dashed border-gray-300 rounded-[10px] hover:border-blue-500">
+              <InboxOutlined className="text-[96px] text-blue-500" />
+              <div className="flex flex-col items-center">
+                <span className="text-[16px]">点击或拖拽文件到此处上传</span>
+                <span className="text-gray-500">
+                  上传文件前请选择文件可见性，公开的文件将会被所有参与者看到
+                </span>
+              </div>
             </div>
+          </Upload>
+          <div className="flex flex-col mx-[100px]">
+            <span className="text-[18px]">允许查看文件的用户组</span>
+            <Checkbox.Group onChange={groupSelectChange} className="mt-[10px]">
+              <div className="flex flex-col flex-wrap justify-around">
+                {options.map((e) => {
+                  return (
+                    <Checkbox
+                      value={e.value}
+                      key={e.value}
+                      className="my-[5px] mx-[20px]"
+                    >
+                      {e.label}
+                    </Checkbox>
+                  );
+                })}
+              </div>
+            </Checkbox.Group>
           </div>
-        </Upload>
-        <div className="flex flex-col mx-[100px]">
-          <span className="text-[18px]">允许查看文件的用户组</span>
-          <Checkbox.Group onChange={groupSelectChange} className="mt-[10px]">
-            <div className="flex flex-col flex-wrap justify-around">
-              {options.map((e) => {
-                return (
-                  <Checkbox
-                    value={e.value}
-                    key={e.value}
-                    className="my-[5px] mx-[20px]"
-                  >
-                    {e.label}
-                  </Checkbox>
-                );
-              })}
-            </div>
-          </Checkbox.Group>
         </div>
-      </div>
+      )}
     </div>
   );
 }

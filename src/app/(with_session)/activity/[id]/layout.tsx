@@ -4,14 +4,16 @@ import Link from "next/link";
 import Image from "next/image";
 import { MyBreadCrumb } from "@/app/(with_session)/activity/[id]/MyBreadCrumb";
 import { ItemType } from "antd/es/menu/interface";
+import { isOrganizer } from "@/app/(with_session)/action";
 
-export default function Layout({
+export default async function Layout({
   children,
   params,
 }: {
   children: React.ReactNode;
   params: { id: string };
 }) {
+  const canIOperate = await isOrganizer(Number(params.id));
   const icon1 = (
     <Image
       src="/reimbursement.svg"
@@ -99,15 +101,19 @@ export default function Layout({
           ),
           key: "reimbursement list",
         },
-        {
-          icon: icon1,
-          label: (
-            <Link href={`/activity/${activityId}/reimbursement/handle`}>
-              审批经费报销
-            </Link>
-          ),
-          key: "reimbursement handle",
-        },
+        ...(canIOperate
+          ? [
+              {
+                icon: icon1,
+                label: (
+                  <Link href={`/activity/${activityId}/reimbursement/handle`}>
+                    审批经费报销
+                  </Link>
+                ),
+                key: "reimbursement handle",
+              },
+            ]
+          : []),
       ],
     },
     {
@@ -146,18 +152,22 @@ export default function Layout({
           icon: icon2,
           key: "survey list",
         },
-        {
-          label: (
-            <Link
-              href={`/activity/${activityId}/survey/statistics-list`}
-              className="text-[18px]"
-            >
-              问卷统计总览
-            </Link>
-          ),
-          icon: icon2,
-          key: "survey dashboard",
-        },
+        ...(canIOperate
+          ? [
+              {
+                label: (
+                  <Link
+                    href={`/activity/${activityId}/survey/statistics-list`}
+                    className="text-[18px]"
+                  >
+                    问卷统计总览
+                  </Link>
+                ),
+                icon: icon2,
+                key: "survey dashboard",
+              },
+            ]
+          : []),
       ],
     },
   ];

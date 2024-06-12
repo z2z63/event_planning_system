@@ -7,9 +7,11 @@ import { useState } from "react";
 export function UserGroupTable({
   data,
   className,
+  canIOperate,
 }: {
   data: ActivityData;
   className?: string;
+  canIOperate: boolean;
 }) {
   const [groups, setGroups] = useState(data.ParticipantGroup);
   const columns: TableColumnsType<(typeof groups)[0]> = [
@@ -35,8 +37,9 @@ export function UserGroupTable({
       dataIndex: "info",
       key: "info",
     },
-
-    {
+  ];
+  if (canIOperate) {
+    columns.push({
       title: "操作",
       render: (value, record, index) => {
         return (
@@ -49,8 +52,8 @@ export function UserGroupTable({
         );
       },
       key: "action",
-    },
-  ];
+    });
+  }
 
   function expandedRowRender(
     record: (typeof groups)[0],
@@ -89,7 +92,9 @@ export function UserGroupTable({
         dataIndex: "id",
         key: "id",
       },
-      {
+    ];
+    if (canIOperate) {
+      columns.push({
         title: "操作",
         render: (value, record, index) => {
           return (
@@ -99,8 +104,8 @@ export function UserGroupTable({
           );
         },
         key: "action",
-      },
-    ];
+      });
+    }
     return (
       <Table
         columns={columns}

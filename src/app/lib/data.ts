@@ -515,3 +515,25 @@ export async function getSurveyFillOutBySurveyId(surveyId: number) {
     },
   });
 }
+
+export async function updatePartialActivity(
+  activityId: number,
+  name: string,
+  budget: Decimal,
+  startTime: Date,
+  endTime: Date,
+  info: string,
+) {
+  return prisma.activity.update({
+    where: {
+      id: activityId,
+    },
+    data: {
+      name,
+      budget,
+      startTime,
+      endTime,
+      info,
+    },
+  });
+}
