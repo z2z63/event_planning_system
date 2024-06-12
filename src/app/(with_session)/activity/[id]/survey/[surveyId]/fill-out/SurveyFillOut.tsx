@@ -9,7 +9,7 @@ import { SessionContext } from "@/app/(with_session)/SessionProvider";
 import { completeSurvey } from "@/app/(with_session)/action";
 
 export default function SurveyFillOut({ survey }: { survey: SurveyType }) {
-  const { id: userId, username: _ } = useContext(SessionContext);
+  const { id: userId } = useContext(SessionContext);
   const surveyModel = new Model(survey.model);
   const onComplete = useCallback(
     async (surveyModel_: Model) => {

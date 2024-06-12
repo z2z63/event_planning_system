@@ -138,7 +138,7 @@ export async function uploadAttachment(
   filename: string,
   fileSize: number,
 ) {
-  const { username: _, id: userId } = await getJWT();
+  const { id: userId } = await getJWT();
   // check if the user is in the activity
   const groups = await getUserGroupInActivityByUserId([userId], activityId);
   if (groups.length === 0) {
@@ -157,7 +157,7 @@ export async function getJWT() {
 }
 
 export async function getAttachmentList(activityId: number) {
-  const { username: _, id: userId } = await getJWT();
+  const { id: userId } = await getJWT();
   const groups = await getUserGroupInActivityByUserId([userId], activityId);
   if (groups.length === 0) {
     throw new Error("user not in activity");
@@ -177,7 +177,7 @@ export async function newReimbursement(
   info: string,
   blobIdList: number[],
 ) {
-  const { username: _, id: userId } = await getJWT();
+  const { id: userId } = await getJWT();
   const groups = await getUserGroupInActivityByUserId([userId], activityId); // 检查用户是否在活动中
   if (groups.length === 0) {
     throw new Error("user not in activity");
@@ -193,7 +193,7 @@ export async function newReimbursement(
 }
 
 export async function getReimbursementList(activityId: number) {
-  const { username: _, id: userId } = await getJWT();
+  const { id: userId } = await getJWT();
   const groups = await getUserGroupInActivityByUserId([userId], activityId); // 检查用户是否在活动中
   if (groups.length === 0) {
     throw new Error("user not in activity");
@@ -207,7 +207,7 @@ export async function getReimbursementList(activityId: number) {
 }
 
 export async function getPendingReimbursementList(activityId: number) {
-  const { username: _, id: userId } = await getJWT();
+  const { id: userId } = await getJWT();
   const handler1sGroups = await getUserGroupInActivityByUserId(
     [userId],
     activityId,
@@ -242,7 +242,7 @@ export async function getPendingReimbursementList(activityId: number) {
     return group;
   }
 
-  return records.map((e, i) => {
+  return records.map((e) => {
     const group = getUser1sGroup(e.userId);
     return {
       ...e,
@@ -264,7 +264,7 @@ export async function handleReimbursement(
   comment: string,
   status: "REJECTED" | "APPROVED",
 ) {
-  const { username: _, id: handlerId } = await getJWT();
+  const { id: handlerId } = await getJWT();
   const activityId = await getActivityIdByReimbursementId(reimbursementId);
   if (activityId === undefined) {
     throw new Error("activity not found");
@@ -292,7 +292,7 @@ export async function newSurvey(
   visibility: string,
   model: string,
 ) {
-  const { username: _, id: creatorId } = await getJWT();
+  const { id: creatorId } = await getJWT();
   const groups = await getUserGroupInActivityByUserId([creatorId], activityId); // 检查用户是否在活动中
   if (groups.length === 0) {
     throw new Error("user not in activity");
@@ -305,7 +305,7 @@ export async function newSurvey(
 }
 
 export async function getSurveyList(activityId: number) {
-  const { username: _, id: userId } = await getJWT();
+  const { id: userId } = await getJWT();
   const groups = await getUserGroupInActivityByUserId([userId], activityId); // 检查用户是否在活动中
   if (groups.length === 0) {
     throw new Error("user not in activity");
@@ -314,7 +314,7 @@ export async function getSurveyList(activityId: number) {
 }
 
 export async function getUnFilledSurveyList(activityId: number) {
-  const { username: _, id: userId } = await getJWT();
+  const { id: userId } = await getJWT();
   const groups = await getUserGroupInActivityByUserId([userId], activityId); // 检查用户是否在活动中
   if (groups.length === 0) {
     throw new Error("user not in activity");
@@ -323,7 +323,7 @@ export async function getUnFilledSurveyList(activityId: number) {
 }
 
 export async function getSurveyModel(surveyId: number) {
-  const { username: _, id: userId } = await getJWT();
+  const { id: userId } = await getJWT();
   const survey = await getSurvey(surveyId);
   if (survey === null) {
     throw new Error("survey not found");
@@ -339,7 +339,7 @@ export async function getSurveyModel(surveyId: number) {
 }
 
 export async function completeSurvey(surveyId: number, fillOut: string) {
-  const { username: _, id: userId } = await getJWT();
+  const { id: userId } = await getJWT();
   const survey = await getSurvey(surveyId);
   if (survey === null) {
     throw new Error("survey not found");
@@ -355,7 +355,7 @@ export async function completeSurvey(surveyId: number, fillOut: string) {
 }
 
 export async function getSurveyResults(surveyId: number) {
-  const { username: _, id: userId } = await getJWT();
+  const { id: userId } = await getJWT();
   const survey = await getSurvey(surveyId);
   if (survey === null) {
     throw new Error("survey not found");
