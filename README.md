@@ -5,7 +5,8 @@
 [![workflow](https://github.com/z2z63/event_planning_system/actions/workflows/build-docker-image.yaml/badge.svg)](https://github.com/z2z63/event_planning_system/actions/workflows/build-docker-image.yaml)
 [![Docker Image Size](https://img.shields.io/docker/image-size/z2z63/event_planning_system?logo=docker)](https://hub.docker.com/r/z2z63/event_planning_system)
 [![Docker Pulls](https://img.shields.io/docker/pulls/z2z63/event_planning_system?logo=docker)](https://hub.docker.com/r/z2z63/event_planning_system)
-
+# 活动安排规划系统
+系统设计、需求分析、项目介绍等文档见[wiki](https://github.com/z2z63/event_planning_system/wiki)
 # 在线演示
 
 已使用vercel部署本项目 [event-planning-system.vercel.app](https://event-planning-system.vercel.app/)  
